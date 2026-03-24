@@ -512,7 +512,7 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
     for card in hand + unselectedHand + save.deck:
         card.retriggeredBy = []
 
-    # handles glass card breaking, goes in reverse so deleting it doesn't mess with the iteration
+    # TODO: fix this weird stuff that I did for command line testing
     for cardIndex in range(len(hand) - 1, -1, -1):
         save.playedCards.append(hand[cardIndex])
         if hand[cardIndex].enhancement == "glass":
@@ -520,7 +520,7 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
                 if random.randint(1, 4) == 1:
                     chain.add("visual", "Broke!", hand[cardIndex], chips, mult)
                     # TODO: Glass joker stuff here
-                    del hand[cardIndex]
+                    save.replaceCardInDeck(hand[cardIndex], None)
 
     # print(f"{chips} X {mult}")
     return chips * mult, chain, hand

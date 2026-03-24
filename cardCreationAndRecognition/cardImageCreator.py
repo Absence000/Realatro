@@ -341,7 +341,6 @@ def setOpacity(image, amnt):
     return image
 
 
-# createImageFromCard(Card(subset="playing", number="A", suit="H", edition="foil"))
 def createTaggedCardImage(card, lookupTable):
     cardImage = createImageFromCard(card)
     alreadyPrinted = openjson("printedCards")

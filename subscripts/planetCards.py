@@ -1,5 +1,6 @@
 from subscripts.spacesavers import *
 from subscripts.inputHandling import alreadyHasConsumable
+from subscripts.spectralCards import Spectral
 
 import random
 
@@ -48,10 +49,6 @@ def upgradeHandLevel(hand, level, chipUpgrade, multUpgrade, save):
         save.handLevels[hand]["level"] += 1
         save.handLevels[hand]["chips"] += chipUpgrade
         save.handLevels[hand]["mult"] += multUpgrade
-    # plural = ""
-    # if level > 1:
-    #     plural = "s"
-    # print(f'{hand} upgraded {level} level{plural} (now at level {save.handLevels[hand]["level"]})!')
 
 defaultplanetCards = [Planet("Pluto"),
                       Planet("Mercury"),
@@ -68,14 +65,29 @@ secretPlanetCardDict = {"Five Of A Kind": Planet("Planet X"),
                         "Flush Five": Planet("Eris"),}
 
 
-def generateShuffledListOfUnlockedPlanetCards(save):
+def generateShuffledListOfUnlockedPlanetCards(save, amount, generateSpecialSpectrals):
     unlockedPlanetCards = defaultplanetCards
     for illegalHand in save.illegalHandsDiscovered:
         unlockedPlanetCards.append(secretPlanetCardDict[illegalHand])
+    blackHole = Spectral("Black Hole")
 
     viablePlanetCards = []
-    for planet in unlockedPlanetCards:
-        if not alreadyHasConsumable(save, planet) or save.hasJoker("Showman"):
-            viablePlanetCards.append(planet)
-    random.shuffle(viablePlanetCards)
+    if save.hasJoker("Showman"):
+        for i in range(amount):
+            if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
+                viablePlanetCards.append(blackHole)
+            else:
+                viablePlanetCards.append(random.choice(unlockedPlanetCards))
+    else:
+        # no duplicates!
+        random.shuffle(viablePlanetCards)
+        for planet in viablePlanetCards:
+            if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
+                newPlanet = blackHole
+            else:
+                newPlanet = planet
+            if not alreadyHasConsumable(save, newPlanet):
+                viablePlanetCards.append(newPlanet)
+                if len(viablePlanetCards) == amount:
+                    break
     return viablePlanetCards

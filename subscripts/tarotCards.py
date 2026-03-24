@@ -3,6 +3,7 @@ from subscripts.jokers import generateRandomWeightedJokers
 from subscripts.planetCards import generateShuffledListOfUnlockedPlanetCards
 from subscripts.spacesavers import *
 from subscripts.inputHandling import CLDisplayHand, clearPrintFolder, prepareCardForPrinting
+from subscripts.spectralCards import Spectral
 import random
 
 
@@ -38,16 +39,31 @@ class Tarot:
         binaryEncoder = "011" + str(format(nameIndex, '05b')) + negativeBit + "00000000"
         return int(binaryEncoder, 2)
 
-# TODO: make this be able to generate duplicates with showman
-def generateShuffledListOfFinishedTarotCards(save):
+def generateShuffledListOfFinishedTarotCards(save, amount, generateSpecialSpectrals):
     finishedTarots = list(openjson("consumables/tarotDict").keys())
+    soul = Spectral("Soul")
 
     viableTarotCards = []
-    for tarot in finishedTarots:
-        tarotObj = Tarot(tarot)
-        if not alreadyHasConsumable(save, tarotObj) or save.hasJoker("Showman"):
-            viableTarotCards.append(tarotObj)
-    random.shuffle(viableTarotCards)
+
+    if save.hasJoker("Showman"):
+        for i in range(amount):
+            if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
+                viableTarotCards.append(soul)
+            else:
+                viableTarotCards.append(Tarot(random.choice(finishedTarots)))
+    else:
+        # no duplicates!
+        random.shuffle(finishedTarots)
+        for tarot in finishedTarots:
+            if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
+                tarotObj = soul
+            else:
+                tarotObj = Tarot(tarot)
+            if not alreadyHasConsumable(save, tarotObj):
+                viableTarotCards.append(tarotObj)
+                if len(viableTarotCards) == amount:
+                    break
+
     return viableTarotCards
 
 def useTarotCard(card, otherCards, save, inConsumables = False):

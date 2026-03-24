@@ -88,7 +88,7 @@ def get_detected_boards(frame, aruco_dict, parameters):
                     detected_boards.append(
                         {"id": combinedID, "rightSideUp": upwards, "verticalPos": verticalPos,
                          "roughPos": roughBoardPosition, "markerSize": marker_size})
-            i += 1  # Move to the next marker
+            i += 1
 
         # stupid python list comprehension removing duplicates too I had to use chatGPT for this
         ids_counter = Counter(ids_list)
@@ -104,8 +104,12 @@ def correctID(id):
     else:
         return str(id).zfill(2)
 
+
+# TODO: this was made for the old system where multiple cards could have the same tag but now they all
+#  have individual tags so most of the complexity is here for no reason lmao
 def arcuoToCard(detected_boards, lookupTable, unpairedTags, save, printedCards, sentToPrinter):
     # this stupid card filtering algorithm took so long jesus
+    # not even chatGPT could help
     output = {"upper": [], "middle": [], "lower": [], "unpairedTags": unpairedTags}
 
     grouped = defaultdict(list)
@@ -130,8 +134,6 @@ def arcuoToCard(detected_boards, lookupTable, unpairedTags, save, printedCards, 
         trues = [d for d in orientations if d['rightSideUp']]
         falses = [d for d in orientations if not d['rightSideUp']]
 
-        # TODO: figure out a way to make it work if there's a bunch of duplicate cards and one only scans right side up
-        #  and another only scans upside down
         num_pairs = min(len(trues), len(falses))
 
         # Add one detection per full pair

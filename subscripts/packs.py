@@ -15,7 +15,7 @@ class Pack:
     # returns the proper amount of cards if opened
     # TODO: I think standard packs can have duplicates but the rest I'm not sure
     def open(self, save):
-        return generateWeightedRandomCards(self.cardType, save, self.length)
+        return generateWeightedRandomCards(self.cardType, save, self.length, generateSpecialSpectrals=True)
 
     def toString(self, mode=None):
         if mode == "name":

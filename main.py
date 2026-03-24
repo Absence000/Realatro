@@ -1,4 +1,5 @@
-from subscripts.consumableCards import consumableCanBeUsedImmediately, sellConsumable, useImmediateConsumable
+from subscripts.consumableCards import consumableCanBeUsedImmediately, sellConsumable, useImmediateConsumable, \
+useConsumable
 from subscripts.handFinderAndPointsAssigner import calcPointsFromHand
 from subscripts.inputHandling import prepareSelectedCards, prepareCardForPrinting
 from subscripts.pygameSubfunctions import *
@@ -67,15 +68,13 @@ def main():
     buttons = []
     pressedButton = ""
     canInteract = True
-    calculatingHand = False
+    currentlyUsingConsumable = False
 
     camIndex = 1
     cap = openCamera(camIndex)
 
-    shopChain = EventChain()
-    packChain = EventChain()
+    chain = EventChain()
     askingAboutImmediateUse = False
-
     running = True
     inGame = False
 
@@ -121,7 +120,7 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     inGame=False
 
-
+        # menu
         if not inGame:
             screen.fill([0, 0, 255])
             menuPoints = drawMenuSpiral(screen, menuPoints)
@@ -139,10 +138,11 @@ def main():
             elif pressedButton == "extract":
                 pressedButton = ""
                 extractBalatroSprites()
+        # game
         else:
             screen.fill(colors.backgroundColor)
             if save.state == "selectingBlind":
-                if calculatingHand:
+                if not canInteract:
                     freezeFrame = rawFrame
                 else:
                     freezeFrame = None
@@ -204,7 +204,7 @@ def main():
 
 
             elif save.state == "playing":
-                if calculatingHand:
+                if not canInteract:
                     freezeFrame = rawFrame
                 else:
                     freezeFrame = None
@@ -216,7 +216,7 @@ def main():
 
                 buttons = []
 
-                if calculatingHand:
+                if not canInteract:
                     # this part took so long to figure out holy shit
                     # iterates through the event chain until there's nothing left to display
                     if currentTime - lastEventTime > 0.5:
@@ -235,43 +235,44 @@ def main():
                                 displayChips = 0
                                 displayMult = 0
                             else:
-                                # end of action check stuff
-                                save.score += points
-                                save.hands -= 1
-                                if save.score >= save.requiredScore:
-                                    # blue seals
-                                    planetDict = openjson("consumables/planetDict")
-                                    for card in foundCards["lower"]:
-                                        if card.seal == "blue":
-                                            planetFound = None
-                                            if len(save.consumables) < save.consumablesLimit:
-                                                for planet, info in planetDict.items():
-                                                    if info["hand"] == lastPlayedHandName:
-                                                        planetFound = planet
+                                if currentlyUsingConsumable:
+                                    currentlyUsingConsumable = False
+                                else:
+                                    # end of action check stuff
+                                    save.score += points
+                                    save.hands -= 1
+                                    if save.score >= save.requiredScore:
+                                        # blue seals
+                                        planetDict = openjson("consumables/planetDict")
+                                        for card in foundCards["lower"]:
+                                            if card.seal == "blue":
+                                                planetFound = None
+                                                if len(save.consumables) < save.consumablesLimit:
+                                                    for planet, info in planetDict.items():
+                                                        if info["hand"] == lastPlayedHandName:
+                                                            planetFound = planet
 
-                                                save.consumables.append(Planet(planetFound))
-                                                print(save.consumables)
+                                                    save.consumables.append(Planet(planetFound))
 
-                                    # advances to the next round
-                                    baseReward = save.blindInfo[2]
-                                    save.nextBlind()
-                                    totalReward = baseReward + save.hands
-                                    interest = min(save.money // 5, 5)
-                                    save.money += totalReward + interest
-                                    save.state = "shop"
-                                    save.shop = Shop(cards=[None, None], packs=[None, None], vouchers=[None], rerollCost=5)
-                                    save.shop.rollCards(save)
-                                    save.shop.rollPacks(save)
+                                        # advances to the next round
+                                        baseReward = save.blindInfo[2]
+                                        save.nextBlind()
+                                        totalReward = baseReward + save.hands
+                                        interest = min(save.money // 5, 5)
+                                        save.money += totalReward + interest
+                                        save.state = "shop"
+                                        save.shop = Shop(cards=[None, None], packs=[None, None], vouchers=[None], rerollCost=5)
+                                        save.shop.rollCards(save)
+                                        save.shop.rollPacks(save)
+                                        saveGame(save)
+                                    elif save.hands <= 0:
+                                        # mr bones logic goes here
+                                        save.state = "dead"
+                                        saveGame(save)
+
+                                    canInteract = True
                                     saveGame(save)
-                                elif save.hands <= 0:
-                                    save.state = "dead"
-                                    saveGame(save)
-
-                                calculatingHand = False
-                                canInteract = True
-                                saveGame(save)
                         else:
-                            calculatingHand = False
                             canInteract = True
                             saveGame(save)
                 else:
@@ -308,7 +309,6 @@ def main():
                         if not analysisMode:
                             selectedHand = prepareSelectedCards(save, foundCards)
                             if 0 < len(selectedHand) <= 5:
-                                calculatingHand = True
                                 canInteract = False
                                 lastPlayedHandName = handType
                                 points, chain, selectedHand = (
@@ -331,45 +331,16 @@ def main():
 
                     elif pressedButton == "use":
                         pressedButton = ""
-                        if isinstance(selectedConsumable, Tarot):
-                            selectedHand = prepareSelectedCards(save, foundCards)
-                            success, successMessage = useTarotCard(selectedConsumable, selectedHand, save, True)
-                            chain = EventChain()
-                            canInteract = False
-                            calculatingHand = True
-                            lastEventTime = currentTime
-                            chainIndex = 0
-                            if success:
-                                chain.add("chips", successMessage, selectedConsumable, 0, 0)
-                                save.lastUsedTarotOrPlanet = selectedConsumable
-                                save.consumables.remove(selectedConsumable)
-                            else:
-                                chain.add("mult", successMessage, selectedConsumable, 0, 0)
-                        elif isinstance(selectedConsumable, Spectral):
-                            selectedHand = prepareSelectedCards(save, foundCards)
-                            success, successMessage = useSpectralCard(selectedConsumable, selectedHand, save, True)
-                            chain = EventChain()
-                            canInteract = False
-                            calculatingHand = True
-                            lastEventTime = currentTime
-                            chainIndex = 0
-                            if success:
-                                chain.add("chips", successMessage, selectedConsumable, 0, 0)
-                                save.consumables.remove(selectedConsumable)
-                            else:
-                                chain.add("mult", successMessage, selectedConsumable, 0, 0)
-
-                        elif isinstance(selectedConsumable, Planet):
-                            usePlanetCard(selectedConsumable, save)
-                            save.consumables.remove(selectedConsumable)
-                            save.lastUsedTarotOrPlanet = selectedConsumable
+                        currentlyUsingConsumable = True
+                        canInteract, lastEventTime, chain, chainIndex = useConsumable(
+                            selectedConsumable, foundCards, save, currentTime, canInteract,
+                            lastEventTime, chain, chainIndex)
 
                     elif pressedButton == "sell":
                         pressedButton = ""
                         sellConsumable(selectedConsumable, save)
 
                     elif pressedButton == "sellJoker":
-                        print("aaa")
                         pressedButton = ""
                         jokerInPlay = False
                         for joker in save.jokersInPlay:
@@ -382,7 +353,7 @@ def main():
             elif save.state == "shop":
                 buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex)
 
-                if calculatingHand:
+                if not canInteract:
                     freezeFrame = rawFrame
                 else:
                     freezeFrame = None
@@ -404,11 +375,11 @@ def main():
                 if askingAboutImmediateUse: buttons += drawImmediateUsePopup(save, font, screen, colors, item)
                 else: buttons += drawShop(save, font, screen, colors, mousePos)
 
-                if len(shopChain.events) > 0:
+                if len(chain.events) > 0:
                     if currentTime - lastEventTime < 0.25:
-                        displayChainEvent(shopChain.events[0], screen, font)
+                        displayChainEvent(chain.events[0], screen, font)
                     else:
-                        del shopChain.events[0]
+                        del chain.events[0]
                 else:
                     canInteract = True
 
@@ -431,10 +402,10 @@ def main():
                             pressedButton = ""
                             buyStatus = save.shop.buyItem(pressedButtonInfo["type"], pressedButtonInfo["index"], save)
                             if isinstance(buyStatus, str):
-                                shopChain.add("visual", buyStatus, pressedButtonInfo["coords"], 0, 0)
+                                chain.add("visual", buyStatus, pressedButtonInfo["coords"], 0, 0)
                                 canInteract = False
                             else:
-                                shopChain.add("visual", "Bought!", pressedButtonInfo["coords"], 0, 0)
+                                chain.add("visual", "Bought!", pressedButtonInfo["coords"], 0, 0)
                                 canInteract = False
                                 item = buyStatus
                                 if isinstance(item, Pack):
@@ -459,35 +430,8 @@ def main():
                             lastEventTime = currentTime
                         elif pressedButton == "use":
                             pressedButton = ""
-                            if isinstance(selectedConsumable, Tarot):
-                                selectedHand = prepareSelectedCards(save, foundCards)
-                                success, successMessage = useTarotCard(selectedConsumable, selectedHand, save, True)
-                                shopChain = EventChain()
-                                canInteract = False
-                                lastEventTime = currentTime
-                                chainIndex = 0
-                                if success:
-                                    shopChain.add("chips", successMessage, selectedConsumable, 0, 0)
-                                    save.consumables.remove(selectedConsumable)
-                                    save.lastUsedTarotOrPlanet = selectedConsumable
-                                else:
-                                    shopChain.add("mult", successMessage, selectedConsumable, 0, 0)
-                            if isinstance(selectedConsumable, Spectral):
-                                selectedHand = prepareSelectedCards(save, foundCards)
-                                success, successMessage = useSpectralCard(selectedConsumable, selectedHand, save, True)
-                                shopChain = EventChain()
-                                canInteract = False
-                                lastEventTime = currentTime
-                                chainIndex = 0
-                                if success:
-                                    shopChain.add("chips", successMessage, selectedConsumable, 0, 0)
-                                    save.consumables.remove(selectedConsumable)
-                                else:
-                                    shopChain.add("mult", successMessage, selectedConsumable, 0, 0)
-                            elif isinstance(selectedConsumable, Planet):
-                                usePlanetCard(selectedConsumable, save)
-                                save.consumables.remove(selectedConsumable)
-                                save.lastUsedTarotOrPlanet = selectedConsumable
+                            if consumableCanBeUsedImmediately(selectedConsumable):
+                                useImmediateConsumable(selectedConsumable, save)
 
                         elif pressedButton == "sell":
                             pressedButton = ""
@@ -528,7 +472,7 @@ def main():
             elif save.state in ["openingPack", "openingPackFromTag"]:
                 buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex)
 
-                if calculatingHand:
+                if not canInteract:
                     freezeFrame = rawFrame
                 else:
                     freezeFrame = None
@@ -547,12 +491,11 @@ def main():
                 else:
                     selectedJoker = None
 
-                if len(packChain.events) > 0:
+                if len(chain.events) > 0:
                     if currentTime - lastEventTime < 0.25:
-                        displayChainEvent(packChain.events[0], screen, font)
+                        displayChainEvent(chain.events[0], screen, font)
                     else:
-                        del packChain.events[0]
-                        calculatingHand = False
+                        del chain.events[0]
                         canInteract = True
                 else:
                     if doneOpeningPack:
@@ -566,6 +509,7 @@ def main():
                 buttons += consumableButtons
                 if canInteract:
                     if pressedButton == "skip":
+                        # red card logic goes here
                         pressedButton = ""
                         doneOpeningPack = True
                     elif pressedButton == "buy":
@@ -584,23 +528,23 @@ def main():
                             canInteract = False
                             lastEventTime = currentTime
                             if success:
-                                packChain.add("chips", successMessage, chosenCard, 0, 0)
+                                chain.add("chips", successMessage, chosenCard, 0, 0)
                                 pickAmount -= 1
                                 del items[chosenItemIndex]
                                 save.lastUsedTarotOrPlanet = chosenCard
                             else:
-                                packChain.add("mult", successMessage, chosenCard, 0, 0)
+                                chain.add("mult", successMessage, chosenCard, 0, 0)
                         elif isinstance(chosenCard, Spectral):
                             selectedHand = prepareSelectedCards(save, foundCards)
                             success, successMessage = useSpectralCard(chosenCard, selectedHand, save, False)
                             canInteract = False
                             lastEventTime = currentTime
                             if success:
-                                packChain.add("chips", successMessage, chosenCard, 0, 0)
+                                chain.add("chips", successMessage, chosenCard, 0, 0)
                                 pickAmount -= 1
                                 del items[chosenItemIndex]
                             else:
-                                packChain.add("mult", successMessage, chosenCard, 0, 0)
+                                chain.add("mult", successMessage, chosenCard, 0, 0)
                         else:
                             # ik this looks dumb but I think I did it like this bc playing cards and jokers are the only
                             # printable things
@@ -616,34 +560,9 @@ def main():
 
                     elif pressedButton == "use":
                         pressedButton = ""
-                        if isinstance(selectedConsumable, Tarot):
-                            selectedHand = prepareSelectedCards(save, foundCards)
-                            success, successMessage = useTarotCard(selectedConsumable, selectedHand, save, True)
-                            packChain = EventChain()
-                            canInteract = False
-                            lastEventTime = currentTime
-                            chainIndex = 0
-                            if success:
-                                packChain.add("chips", successMessage, selectedConsumable, 0, 0)
-                                save.consumables.remove(selectedConsumable)
-                                save.lastUsedTarotOrPlanet = selectedConsumable
-                            else:
-                                packChain.add("mult", successMessage, selectedConsumable, 0, 0)
-                        elif isinstance(chosenCard, Spectral):
-                            selectedHand = prepareSelectedCards(save, foundCards)
-                            success, successMessage = useSpectralCard(chosenCard, selectedHand, save, False)
-                            canInteract = False
-                            lastEventTime = currentTime
-                            if success:
-                                packChain.add("chips", successMessage, chosenCard, 0, 0)
-                                pickAmount -= 1
-                                del items[chosenItemIndex]
-                            else:
-                                packChain.add("mult", successMessage, chosenCard, 0, 0)
-                        elif isinstance(selectedConsumable, Planet):
-                            usePlanetCard(selectedConsumable, save)
-                            save.consumables.remove(selectedConsumable)
-                            save.lastUsedTarotOrPlanet = selectedConsumable
+                        canInteract, lastEventTime, chain, chainIndex = useConsumable(
+                            selectedConsumable, foundCards, save, currentTime, canInteract,
+                            lastEventTime, chain, chainIndex)
 
                     elif pressedButton == "sell":
                         pressedButton = ""

@@ -273,17 +273,17 @@ def binaryToPlayingCardNumber(binary):
         return str(number)
 
 # TODO: get this working with vouchers eventually
-def generateWeightedRandomCards(subset, save, amount):
+def generateWeightedRandomCards(subset, save, amount, generateSpecialSpectrals=False):
     if subset == "playing":
         return generateListOfRandomPlayingCards(save, amount)
     elif subset == "tarot":
-        return generateShuffledListOfFinishedTarotCards(save)[0:amount]
+        return generateShuffledListOfFinishedTarotCards(save, amount, generateSpecialSpectrals)
     elif subset == "planet":
-        return generateShuffledListOfUnlockedPlanetCards(save)[0:amount]
+        return generateShuffledListOfUnlockedPlanetCards(save, amount, generateSpecialSpectrals)
     elif subset == "joker":
         return generateRandomWeightedJokers(save, amount)
     elif subset == "spectral":
-        return generateShuffledListOfFinishedSpectralCards(save)[0:amount]
+        return generateShuffledListOfFinishedSpectralCards(save, amount, generateSpecialSpectrals)
 
 
 

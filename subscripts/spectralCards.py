@@ -1,6 +1,5 @@
 from subscripts.inputHandling import prepareCardForPrinting, alreadyHasConsumable
 from subscripts.jokers import generateShuffledListOfFinishedJokersByRarity
-from subscripts.planetCards import upgradeHandLevel
 from subscripts.spacesavers import *
 import random
 
@@ -193,18 +192,38 @@ def useSpectralCard(card, otherCards, save, inConsumables = False):
     # black hole
     elif spectralType == "upgradeAllHands":
         for planet, planetCardInfo in openjson("consumables/planetDict").items():
-            upgradeHandLevel(planetCardInfo["hand"], 1, planetCardInfo["addition"][1], planetCardInfo["addition"][0],
-                             save)
+            hand = planetCardInfo["hand"]
+            chipUpgrade = planetCardInfo["addition"][1]
+            multUpgrade = planetCardInfo["addition"][0]
+            save.handLevels[hand]["level"] += 1
+            save.handLevels[hand]["chips"] += chipUpgrade
+            save.handLevels[hand]["mult"] += multUpgrade
         return True, "Success!"
 
-# TODO: make this be able to generate duplicates with showman
-def generateShuffledListOfFinishedSpectralCards(save):
-    finishedSpectrals = list(openjson("consumables/spectralDict").keys())
+def generateShuffledListOfFinishedSpectralCards(save, amount, generateSpecialSpectrals):
+    allSpectrals = list(openjson("consumables/spectralDict").keys())
+    specialSpectrals = allSpectrals[-2:]
+    finishedSpectrals = allSpectrals[:-2]
 
     viableSpectralCards = []
-    for spectral in finishedSpectrals:
-        spectralObj = Spectral(spectral)
-        if not alreadyHasConsumable(save, spectralObj) or save.hasJoker("Showman"):
-            viableSpectralCards.append(spectralObj)
-    random.shuffle(viableSpectralCards)
+
+    if save.hasJoker("Showman"):
+        for i in range(amount):
+            if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
+                viableSpectralCards.append(Spectral(random.choice(specialSpectrals)))
+            else:
+                viableSpectralCards.append(Spectral(random.choice(allSpectrals)))
+    else:
+        # no duplicates!
+        random.shuffle(finishedSpectrals)
+        for spectral in finishedSpectrals:
+            if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
+                spectralObj = Spectral(random.choice(specialSpectrals))
+            else:
+                spectralObj = Spectral(spectral)
+            if not alreadyHasConsumable(save, spectralObj):
+                viableSpectralCards.append(spectralObj)
+                if len(viableSpectralCards) == amount:
+                    break
+
     return viableSpectralCards

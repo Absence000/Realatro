@@ -4,13 +4,14 @@ from subscripts.tarotCards import useTarotCard, Tarot
 from subscripts.spectralCards import useSpectralCard, Spectral
 from subscripts.spacesavers import *
 import math
+from subscripts.inputHandling import prepareSelectedCards
+from subscripts.eventChainManagement import EventChain
 
-# TODO: eventually this will replace all the garbage in main.py it's not finished yet
-def useConsumable(selectedConsumable, foundCards, save, currentTime):
+def useConsumable(selectedConsumable, foundCards, save, currentTime,
+                  canInteract, lastEventTime, chain, chainIndex):
     if isinstance(selectedConsumable, Tarot):
         selectedHand = prepareSelectedCards(save, foundCards)
         success, successMessage = useTarotCard(selectedConsumable, selectedHand, save, True)
-        chain = EventChain()
         canInteract = False
         lastEventTime = currentTime
         chainIndex = 0
@@ -23,7 +24,6 @@ def useConsumable(selectedConsumable, foundCards, save, currentTime):
     if isinstance(selectedConsumable, Spectral):
         selectedHand = prepareSelectedCards(save, foundCards)
         success, successMessage = useSpectralCard(selectedConsumable, selectedHand, save, True)
-        chain = EventChain()
         canInteract = False
         lastEventTime = currentTime
         chainIndex = 0
@@ -36,6 +36,7 @@ def useConsumable(selectedConsumable, foundCards, save, currentTime):
         usePlanetCard(selectedConsumable, save)
         save.consumables.remove(selectedConsumable)
         save.lastUsedTarotOrPlanet = selectedConsumable
+    return canInteract, lastEventTime, chain, chainIndex
 
 
 def getConsumableSellPrice(consumable, save):
@@ -66,3 +67,4 @@ def useImmediateConsumable(consumable, save):
 
     elif isinstance(consumable, Spectral):
         useSpectralCard(consumable, None, save)
+    save.consumables.remove(consumable)

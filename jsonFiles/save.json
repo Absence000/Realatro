@@ -74,21 +74,21 @@
         },
         {
             "number": "10",
-            "enhancement": null,
+            "enhancement": "steel",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 1280
         },
         {
             "number": "J",
-            "enhancement": null,
+            "enhancement": "gold",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 1440
         },
         {
             "number": "Q",
@@ -97,25 +97,25 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": 1600
+            "id": null
         },
         {
             "number": "K",
-            "enhancement": null,
+            "enhancement": "mult",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 1760
         },
         {
             "number": "A",
-            "enhancement": null,
+            "enhancement": "glass",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 1920
         },
         {
             "number": "2",
@@ -469,51 +469,103 @@
             "id": null
         }
     ],
-    "ante": 1,
-    "blindIndex": 0,
-    "state": "dead",
-    "hands": 0,
+    "ante": 6,
+    "blindIndex": 2,
+    "state": "shop",
+    "hands": 3,
     "discards": 3,
     "shop": {
         "cards": [
-            null,
-            null
+            [
+                [
+                    "Reserved Parking",
+                    {
+                        "type": "econ",
+                        "finished": true,
+                        "position": [
+                            6,
+                            13
+                        ],
+                        "id": 82,
+                        "cost": 6,
+                        "rarity": "Common",
+                        "description": "Each face card held in hand has a 1 in 2 chance to give $1",
+                        "additionalSellValue": 0,
+                        "edition": null
+                    }
+                ],
+                6
+            ],
+            [
+                [
+                    "Business Card",
+                    {
+                        "type": "economy",
+                        "money": 2,
+                        "finished": true,
+                        "condition": "face",
+                        "position": [
+                            1,
+                            4
+                        ],
+                        "id": 42,
+                        "cost": 4,
+                        "rarity": "Common",
+                        "description": "Played face cards have a 1 in 2 chance to give $2 when scored",
+                        "additionalSellValue": 0,
+                        "edition": null
+                    }
+                ],
+                4
+            ]
         ],
         "packs": [
-            null,
-            null
+            [
+                {
+                    "subset": "spectral",
+                    "size": "jumbo"
+                },
+                6
+            ],
+            [
+                {
+                    "subset": "arcana",
+                    "size": "mega"
+                },
+                8
+            ]
         ],
         "vouchers": [
             null
         ],
-        "rerollCost": 0
+        "rerollCost": 5
     },
-    "money": 4,
+    "money": 126,
     "handLevels": {
         "High Card": {
-            "level": 1,
-            "chips": 5,
-            "mult": 1
+            "level": 46,
+            "chips": 455,
+            "mult": 46
         },
         "Pair": {
-            "level": 1,
-            "chips": 10,
-            "mult": 2
+            "level": 5,
+            "chips": 70,
+            "mult": 6
         },
         "Two Pair": {
-            "level": 1,
-            "chips": 20,
-            "mult": 2
-        },
-        "Three Of A Kind": {
-            "level": 1,
-            "chips": 30,
+            "level": 2,
+            "chips": 40,
             "mult": 3
         },
+        "Three Of A Kind": {
+            "level": 8,
+            "chips": 170,
+            "mult": 17
+        },
         "Straight": {
-            "level": 1,
-            "chips": 30,
-            "mult": 4
+            "level": 45,
+            "chips": 1350,
+            "mult": 136
         },
         "Flush": {
             "level": 1,
@@ -521,9 +573,9 @@
             "mult": 4
         },
         "Full House": {
-            "level": 1,
-            "chips": 40,
-            "mult": 4
+            "level": 9,
+            "chips": 240,
+            "mult": 20
         },
         "Four Of A Kind": {
             "level": 1,
@@ -559,62 +611,76 @@
     "illegalHandsDiscovered": [],
     "consumables": [],
     "consumablesLimit": 2,
-    "hand": [],
+    "hand": [
+        {
+            "number": "K",
+            "enhancement": "mult",
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1760
+        },
+        {
+            "number": "J",
+            "enhancement": "gold",
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1440
+        }
+    ],
     "handLimit": 8,
     "jokers": [],
     "jokersInPlay": [],
     "jokerLimit": 5,
-    "requiredScore": 300,
+    "requiredScore": 40000,
     "blindInfo": [
-        "Small Blind",
-        1,
-        3
+        "Boss Blind",
+        2,
+        5
     ],
     "discardedCards": [],
     "playedCards": [
         {
-            "number": "Q",
-            "enhancement": null,
+            "number": "J",
+            "enhancement": "gold",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": 1600
+            "id": 1440
         },
         {
-            "number": "Q",
-            "enhancement": null,
+            "number": "10",
+            "enhancement": "steel",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": 1600
+            "id": 1280
         },
         {
-            "number": "Q",
-            "enhancement": null,
+            "number": "A",
+            "enhancement": "glass",
             "edition": null,
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": 1600
-        },
-        {
-            "number": "Q",
-            "enhancement": null,
-            "edition": null,
-            "seal": null,
-            "suit": "S",
-            "retriggeredBy": [],
-            "id": 1600
+            "id": 1920
         }
     ],
-    "score": 60,
+    "score": 42872,
     "round": 1,
     "irl": true,
-    "lastUsedTarotOrPlanet": null,
+    "lastUsedTarotOrPlanet": {
+        "name": "The High Priestess (II)",
+        "negative": null,
+        "type": "Tarot"
+    },
     "startingHands": 4,
     "startingDiscards": 3,
     "ectoUses": 0,
-    "firstShopEncountered": true
+    "firstShopEncountered": false
 }

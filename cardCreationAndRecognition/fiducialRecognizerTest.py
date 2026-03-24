@@ -5,23 +5,16 @@ import numpy as np
 def generateBoardForCard(num):
     num = str(num).zfill(4)
     idArray = [num[:2], num[2:]]
-    # print(idArray)
-    # Load the 4x4_100 dictionary
-    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
 
-    # Define the 1x2 ArUco GridBoard (1 row, 2 columns)
+    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
+    # 1 row 2 column grid board
     board = cv2.aruco.GridBoard(size=(1, 2),
                                 markerLength=.04,
                                 markerSeparation=.01,
                                 dictionary=aruco_dict,
                                 ids=np.array(idArray, dtype=np.int32))
 
-
-    # Create a blank white image for the board
-    board_size = (400, 900)  # Width × Height in pixels
-
-    # Draw the board
-    boardImage = board.generateImage(outSize=board_size, marginSize=0)
+    boardImage = board.generateImage(outSize=(400, 900), marginSize=0)
 
     # the margins are being annoying so I just made them have a margin size of 0 and added the border manually
     borderSize = 40
@@ -36,8 +29,7 @@ def generateBoardForCard(num):
     )
 
     boardImage = cv2.resize(boardImage, (96, 196))
-
-    # Save the board image
+    # TODO: eventually change this to turn the cv2 into pil automatically but idk how to do that
     cv2.imwrite("testBoard.png", boardImage)
 
 def correctID(id):

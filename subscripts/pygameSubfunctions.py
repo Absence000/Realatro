@@ -902,13 +902,13 @@ def extractBalatroSprites():
 
     with zipfile.ZipFile(path, 'r') as zf:
         extractImage(zf, "resources/textures/2x/BlindChips.png", "blindChips")
-        extractImage(zf, "resources/textures/2x/Tarots.png", "consumables")
+        extractImage(zf, "resources/textures/1x/Tarots.png", "consumables")
         # https://github.com/EFHIII/balatro-calculator/blob/main/assets/Editions.png
         # it has an MIT license don't worry
-        extractImage(zf, "resources/textures/2x/Enhancers.png", "enhancers")
-        extractImage(zf, "resources/textures/2x/Jokers.png", "jokers")
-        extractImage(zf, "resources/textures/2x/boosters.png", "packs")
-        extractImage(zf, "resources/textures/2x/8BitDeck_opt2.png", "playing")
+        extractImage(zf, "resources/textures/1x/Enhancers.png", "enhancers")
+        extractImage(zf, "resources/textures/1x/Jokers.png", "jokers")
+        extractImage(zf, "resources/textures/1x/boosters.png", "packs")
+        extractImage(zf, "resources/textures/1x/8BitDeck_opt2.png", "playing")
         extractImage(zf, "resources/textures/2x/chips.png", "chips")
 
 # idk why but chatGPT says I have to do all this complicated shit to extract it without
