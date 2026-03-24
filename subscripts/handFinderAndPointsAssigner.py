@@ -331,8 +331,6 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
 
             # TODO: Every 6 hands played check (Loyalty Card)
 
-            # TODO: played 8 tarot card creation (8 ball)
-
             # TODO: Final hand check (Dusk, Acrobat)
 
             # end-of-hand check lowest rank (raised fist)
@@ -628,28 +626,32 @@ def triggerCard(card, save, chain):
                     chips += chipsToAdd
                     chain.add("chip", chipsToAdd, joker, chips, mult)
 
-        # number check (fibonacci, even steven, odd todd, scholar, walkie talkie, hack, wee joker)
+        # number check (fibonacci, even steven, odd todd, scholar, walkie talkie, hack, wee joker, 8 ball)
+        if jokerName == "Wee Joker":
+            if card.number == "2":
+                addToJokerAttribute(save, "Wee Joker", "chip", 8)
+                chain.add("visual", "+8", joker, chips, mult)
         if condition == "numbers":
             if card.number in jokerData["numbers"]:
-                if jokerName == "Wee Joker":
-                    addToJokerAttribute(save, "Wee Joker", "chip", 8)
-                    chain.add("visual", "+8", joker, chips, mult)
-                else:
-                    # can't use elif bc of walkie talkie
-                    if "mult" in jokerData:
-                        multToAdd = jokerData["mult"]
-                        mult += multToAdd
-                        chain.add("mult", multToAdd, joker, chips, mult)
-                    if "chip" in jokerData:
-                        chipsToAdd = jokerData["chip"]
-                        chips += chipsToAdd
-                        chain.add("chip", chipsToAdd, joker, chips, mult)
-                    # hack is weird since it retrigs
-                    if jokerData["type"] == "retrig":
-                        if "hack" not in card.retriggeredBy:
-                            card.retriggeredBy.append("hack")
-                            chain.add("visual", "Retriggered!", joker, chips, mult)
-                            triggerCard(card, save, chain)
+                # can't use elif bc of walkie talkie
+                if "mult" in jokerData:
+                    multToAdd = jokerData["mult"]
+                    mult += multToAdd
+                    chain.add("mult", multToAdd, joker, chips, mult)
+                if "chip" in jokerData:
+                    chipsToAdd = jokerData["chip"]
+                    chips += chipsToAdd
+                    chain.add("chip", chipsToAdd, joker, chips, mult)
+                # hack is weird since it retrigs
+                if jokerData["type"] == "retrig":
+                    if "hack" not in card.retriggeredBy:
+                        card.retriggeredBy.append("hack")
+                        chain.add("visual", "Retriggered!", joker, chips, mult)
+                        triggerCard(card, save, chain)
+
+                if jokerName == "8 Ball":
+                    if random.randint(1, 4) == 1:
+                        addTarotCardIfRoom(save)
 
         # face check (scary face, business, smiley face)
         if condition == "face":

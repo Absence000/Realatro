@@ -228,7 +228,7 @@
         "id": 21,
         "cost": 6,
         "rarity": "Uncommon",
-        "description": "When Blind is selected, destroy Joker to the right and permantly add double its sell value to this Mult",
+        "description": "When Blind is selected, destroy Joker to the right and permanently add double its sell value to this Mult",
         "type": "mult",
         "position": [5, 5]
     },
@@ -275,6 +275,8 @@
         "rarity": "Common",
         "description": "1 in 4 chance for each played 8 to create a Tarot card when scored (Must have room)",
         "type": "effect",
+        "condition": "numbers",
+        "numbers": ["8"],
         "finished": true,
         "position": [0, 5]
     },

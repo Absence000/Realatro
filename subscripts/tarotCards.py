@@ -161,11 +161,11 @@ def useTarotCard(card, otherCards, save, inConsumables = False):
 
             if amountToGenerate == 0: return False, "Not enough space!"
 
-            for i in range(amountToGenerate):
-                if subset == "planet":
-                    save.consumables.append(generateShuffledListOfUnlockedPlanetCards(save)[0])
-                elif subset == "tarot":
-                    save.consumables.append(generateShuffledListOfFinishedTarotCards(save)[0])
+            if subset == "planet":
+                save.consumables += generateShuffledListOfUnlockedPlanetCards(save, amountToGenerate, False)
+            elif subset == "tarot":
+                save.consumables += generateShuffledListOfFinishedTarotCards(save, amountToGenerate, False)
+
             return True, "Success!"
 
     # hermit/temperance

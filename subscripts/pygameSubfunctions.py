@@ -12,6 +12,7 @@ from subscripts.tarotCards import Tarot
 from subscripts.jokers import Joker
 from subscripts.spectralCards import Spectral
 from subscripts.spacesavers import *
+from pathlib import Path
 
 def drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsScan, backupDetectedCardsScanTime,
                                   currentTime, save, frame, cutoff):
@@ -61,6 +62,7 @@ def drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsS
                 # it checks if the old cards' IDs are anywhere else in the new scan
                 # if they are it uses the new scan instead
                 # if they aren't it uses the old one
+                # this took so long to figure out lmao
                 oldIDs = {getCardAndJokerTrackingID(c) for c in oldSection}
                 newIDs = {getCardAndJokerTrackingID(c) for c in newSection}
                 oldIDsNotInSection = list(oldIDs - newIDs)
@@ -75,8 +77,8 @@ def drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsS
             backupDetectedCardsScan[section] = sortedDetectedCards[section]
             backupDetectedCardsScanTime[section] = currentTime
 
-    # anti card-appearing-in-multiple-sections +
-    # if a card is showing up in multiple sections now after anti flicker we delete it from the top down
+    # anti card-appearing-in-multiple-sections:
+    # prioritizes the lowest section
     previousSectionIDs = []
     currentSectionIDs = []
     for section in ["upper", "middle", "lower"]:
@@ -98,10 +100,6 @@ def drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsS
                     currentSectionIDs.append(trackingID)
 
         previousSectionIDs = currentSectionIDs
-
-
-
-
 
     # draws the extra stuff on top if needed
     for section, sublist in sortedDetectedCards.items():
@@ -140,9 +138,14 @@ def getCardAndJokerTrackingID(card):
 
 def overlayStuffOnCard(card, debuffed, screen):
     x, y = getFixedCardCenter(card.coords)
-    # TODO: I thought for sure I'd need to cache the images but somehow this godawful shit is fine for
-    #  performance, but if there's lag later it'll probably be caused by this
-    rawImg = createImageFromCard(card, True, debuffed)
+    debuffedStr = ""
+    if debuffed:
+        debuffedStr = "Debuffed"
+    cachedImagePath = f"imageCache/{debuffedStr}{card.toString()}.png"
+    if Path(cachedImagePath).is_file:
+        rawImg = Image.open(cachedImagePath)
+    else:
+        rawImg = createImageFromCard(card, True, debuffed)
     fixedImg = pygame.image.frombytes(rawImg.tobytes(), (690, 966), "RGBA")
     scalingFactor = 0.0045
     scale = card.scale * scalingFactor

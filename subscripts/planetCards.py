@@ -80,8 +80,8 @@ def generateShuffledListOfUnlockedPlanetCards(save, amount, generateSpecialSpect
                 viablePlanetCards.append(random.choice(unlockedPlanetCards))
     else:
         # no duplicates!
-        random.shuffle(viablePlanetCards)
-        for planet in viablePlanetCards:
+        random.shuffle(unlockedPlanetCards)
+        for planet in unlockedPlanetCards:
             if generateSpecialSpectrals and random.randint(1, 1000) <= 3:
                 newPlanet = blackHole
             else:

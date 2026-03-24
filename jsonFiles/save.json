@@ -540,7 +540,7 @@
         ],
         "rerollCost": 5
     },
-    "money": 126,
+    "money": 99999999,
     "handLevels": {
         "High Card": {
             "level": 46,

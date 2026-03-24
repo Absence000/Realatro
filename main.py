@@ -74,6 +74,8 @@ def main():
     cap = openCamera(camIndex)
 
     chain = EventChain()
+    chainIndex = 0
+
     askingAboutImmediateUse = False
     running = True
     inGame = False
@@ -127,6 +129,9 @@ def main():
             buttons += drawMenu(screen, font, colors)
             if pressedButton == "exit":
                 pressedButton = ""
+                os.rmdir("imageCache")
+                # idk if I need this
+                os.makedirs("imageCache", exist_ok=True)
                 running=False
             elif pressedButton == "load":
                 pressedButton = ""

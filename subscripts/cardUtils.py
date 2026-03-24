@@ -330,7 +330,7 @@ def generateListOfRandomPlayingCards(save, amount):
 
 def addTarotCardIfRoom(save):
     if len(save.consumables) <= save.consumablesLimit:
-        save.consumables.append(generateShuffledListOfFinishedTarotCards(save)[0])
+        save.consumables.append(generateShuffledListOfFinishedTarotCards(save, 1))
         return True
     return False
 

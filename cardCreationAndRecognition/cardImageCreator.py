@@ -162,6 +162,14 @@ def createImageFromCard(card, forPygame=False, debuffed=False):
 
         canvas.paste(resize, topLeftCorner, resize)
         cardImage = canvas
+
+    # caches it at runtime
+    if forPygame:
+        debuffedStr = ""
+        if debuffed:
+            debuffedStr = "Debuffed "
+        cardImage.save(f"imageCache/{debuffedStr}{card.toString()}.png")
+
     return cardImage
 
 def getConsumableImageByCoords(x, y, card, secondary=None):
