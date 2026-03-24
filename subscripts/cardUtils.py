@@ -340,3 +340,14 @@ def cardCountsAsFaceCard(card, save):
     elif card.number in ["J", "Q", "K"] and card.enhancement != "stone":
         return True
     return False
+
+# this was for testing the scoring system in the command line with weird decks
+def createDeck(name):
+    deck = openjson("decks")
+    deck[name] = []
+    suits = ["S", "C", "D", "H"]
+    values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    for suit in suits:
+        for value in values:
+            deck[name].append(Card(subset="playing", number="A", suit="S", enhancement="gold").toDict())
+    savejson("decks", deck)

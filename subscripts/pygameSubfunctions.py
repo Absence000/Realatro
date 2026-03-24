@@ -1,4 +1,4 @@
-import pygame, cv2, textwrap
+import pygame, cv2, textwrap, random, math, zipfile, os
 import numpy as np
 from cardCreationAndRecognition.finalArcuoTracking import pygameDisplayFoundCards
 from subscripts.consumableCards import getConsumableSellPrice
@@ -212,7 +212,8 @@ def drawBlindInfoScreen(save, blindInfo, screen, colors, font, origin, mode, chi
 # TODO: when it's the boss blind the outlines change to the color of the boss blind
 def drawLeftBar(save, font, screen, colors, handType, level, score, chips, mult, camIndex):
     screenHeight = screen.height
-    chipSymbol = pygame.image.load("cardSprites/white stake.png")
+    rawChipSymbol = pygame.image.load("sprites/chips.png").subsurface(0, 0, 58, 58)
+    chipSymbol = pygame.transform.scale(rawChipSymbol, (30, 30))
 
     leftBarOrigin = 20
     leftBarThickness = 300
@@ -349,9 +350,9 @@ blindImageDict = {
 }
 
 def getBlindSprite(name, imageSize):
-    blindSprites = Image.open("cardSprites/blindChips.png")
+    blindSprites = Image.open("sprites/blindChips.png")
     blindImageIndex = blindImageDict[name]
-    size = 34
+    size = 68
     topLeftY = blindImageIndex * size
     bottomRightY = (blindImageIndex + 1) * size
     croppedImage = blindSprites.crop((0, topLeftY, size, bottomRightY))
@@ -450,7 +451,8 @@ def drawCardCounter(save, font, screen, colors, foundCards):
         trackedCardsInThirdOfScreen = []
         for card in cards:
             trackedCardsInThirdOfScreen.append(card.toString(mode="fancy"))
-        finishedMessage = f"{subsetDict[subset]}\n{'\n'.join(trackedCardsInThirdOfScreen)}"
+        formattedTrackedCardsInThirdOfScreen = '\n'.join(trackedCardsInThirdOfScreen)
+        finishedMessage = f"{subsetDict[subset]}\n{formattedTrackedCardsInThirdOfScreen}"
         yOffset = 0
         overflowTrackedCardsAmount = len(trackedCardsInThirdOfScreen) - 7
         if overflowTrackedCardsAmount > 0:
@@ -528,7 +530,7 @@ def drawBlindSelectScreen(save, font, screen, colors):
 
         drawBlindInfoScreen(
             save, blindInfo, screen, colors, font, (startX + 25, y + 55), "selection",
-            pygame.image.load("cardSprites/white stake.png"))
+            pygame.image.load("sprites/chips.png").subsurface(0, 0, 58, 58))
 
         if blindInfo[0] == "Boss Blind":
             drawText(screen, "Up The Ante", font, colors.yellow, (startX + 100, y + 265), size=30)
@@ -786,7 +788,7 @@ def drawDescription(screen, font, save, colors, x, y, packItemHeight, item):
 def drawImmediateUsePopup(save, font, screen, colors, item):
     drawRect(screen, colors.lightUI, (375, 375, 650, 300), colors.uiOutline, round=8)
     drawRect(screen, colors.darkUI, (380, 380, 640, 290), round=8)
-    drawText(screen, f"Use {item.toString(mode="name")} immediately?", font, colors.white, (700, 400))
+    drawText(screen, f"Use {item.toString(mode='name')} immediately?", font, colors.white, (700, 400))
 
     immediateUseButtons = []
     yesRect = (390, 560, 200, 100)
@@ -814,6 +816,110 @@ def getFixedCardCenter(origin):
     newY = int(origin[1] / 2)
     return newX, newY
 
+def generateStartingMenuPoints():
+    pointList = []
+    # radial coords but it's 2pi * 100 for speed
+    for i in range(500):
+        pointList.append([random.randint(0, 1000), random.randint(0, 620)])
+    return pointList
+
+def drawMenuSpiral(screen, menuPoints):
+    i = 0
+    cartesianPointsAndRadius = []
+    for radius, angle in menuPoints:
+        if radius <= 1:
+            radius = 1000
+        normalizedRadius = radius/1000
+        radius -= 1
+        menuPoints[i][0] = radius
+
+        angle += 3 * (1-normalizedRadius)
+        menuPoints[i][1] = angle
+        angle = angle/100
+        cartesianPointsAndRadius.append([[radius * math.cos(angle) + 640, radius * math.sin(angle) + 360], normalizedRadius])
+        i += 1
+
+    for point, normalizedRadius in cartesianPointsAndRadius:
+        pygame.draw.circle(screen, [255*normalizedRadius, 0, 255*(1-normalizedRadius)], point, 200*normalizedRadius)
+
+    return menuPoints
+
+
+
+def drawMenu(screen, font, colors):
+    logo = pygame.image.load("sprites/realatro logo.png")
+    scaledLogo = pygame.transform.scale(logo, (1000, 500))
+    screen.blit(scaledLogo, (145, 20))
+
+    buttons = []
+    drawRect(screen, colors.lightUI, (320, 500, 640, 150), colors.darkUI, 8)
+
+    saveRect = (325, 505, 155, 140)
+    drawRect(screen, colors.green, saveRect, round=8)
+    drawText(screen, "PLAY", font, colors.white, (405, 540), size=40)
+    drawText(screen, "(FROM SAVE)", font, colors.white, (405, 590), size=30)
+
+    buttons.append({
+        "name": "load",
+        "rect": saveRect
+    })
+
+    newSaveRect = (485, 505, 155, 140)
+    drawRect(screen, colors.blue, newSaveRect, round=8)
+    drawText(screen, "NEW", font, colors.white, (565, 540), size=40)
+    drawText(screen, "GAME", font, colors.white, (565, 590), size=30)
+
+    buttons.append({
+        "name": "new",
+        "rect": newSaveRect
+    })
+
+    loadSpritesRect = (645, 505, 155, 140)
+    drawRect(screen, colors.yellow, loadSpritesRect, round=8)
+    drawText(screen, "LOAD", font, colors.white, (725, 540), size=40)
+    drawText(screen, "SPRITES", font, colors.white, (725, 590), size=30)
+
+    buttons.append({
+        "name": "extract",
+        "rect": loadSpritesRect
+    })
+
+    exitRect = (805, 505, 155, 140)
+    drawRect(screen, colors.red, exitRect, round=8)
+    drawText(screen, "EXIT", font, colors.white, (885, 540), size=40)
+    drawText(screen, "GAME", font, colors.white, (885, 590), size=30)
+
+    buttons.append({
+        "name": "exit",
+        "rect": exitRect
+    })
+
+    return buttons
+
+def extractBalatroSprites():
+    with open("pathToBalatroExe.txt", 'r') as file:
+        path = f"{file.read()}\\Balatro.exe"
+
+    with zipfile.ZipFile(path, 'r') as zf:
+        extractImage(zf, "resources/textures/2x/BlindChips.png", "blindChips")
+        extractImage(zf, "resources/textures/2x/Tarots.png", "consumables")
+        # https://github.com/EFHIII/balatro-calculator/blob/main/assets/Editions.png
+        # it has an MIT license don't worry
+        extractImage(zf, "resources/textures/2x/Enhancers.png", "enhancers")
+        extractImage(zf, "resources/textures/2x/Jokers.png", "jokers")
+        extractImage(zf, "resources/textures/2x/boosters.png", "packs")
+        extractImage(zf, "resources/textures/2x/8BitDeck_opt2.png", "playing")
+        extractImage(zf, "resources/textures/2x/chips.png", "chips")
+
+# idk why but chatGPT says I have to do all this complicated shit to extract it without
+# also extracting the subfolders and renaming it
+def extractImage(zf, texturePath, newName):
+    with zf.open(texturePath) as source:
+        output_path = os.path.join("sprites", f"{newName}.png")
+
+        with open(output_path, "wb") as target:
+            target.write(source.read())
+
 def drawRect(screen, color, rect, outline=None, round=None):
     if round is not None:
         borderRadius = round
@@ -838,7 +944,7 @@ def drawText(screen, text, font, color, coords, centering="center", size=None, r
     if size is None:
         label = font.render(text, True, color)
     else:
-        font = pygame.font.Font("cardSprites/font/m6x11.ttf", size)
+        font = pygame.font.Font("sprites/font/m6x11.ttf", size)
         label = font.render(text, True, color)
 
     if rotation is not None:

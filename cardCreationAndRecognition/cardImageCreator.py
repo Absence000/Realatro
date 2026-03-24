@@ -103,7 +103,7 @@ def createImageFromCard(card, forPygame=False, debuffed=False):
             # it's the soul and I have to do some weird stuff
             baseSoulImage = getConsumableImageByCoords(2, 2, card)
 
-            baseImage = Image.open("cardSprites/enhancers.png")
+            baseImage = Image.open("sprites/enhancers.png")
             topLeftX = 1
             topLeftY = enhancersHeight + enhancersPixelGap + 1
             crop = baseImage.crop((topLeftX, topLeftY, topLeftX + enhancersWidth, topLeftY + enhancersHeight))
@@ -168,9 +168,9 @@ def getConsumableImageByCoords(x, y, card, secondary=None):
     # stupid circular imports making me do this instead of isinstance()
     cardType = type(card).__name__
     if cardType == "Joker":
-        imagePath = "cardSprites/jokers.png"
+        imagePath = "sprites/jokers.png"
     else:
-        imagePath = "cardSprites/consumables.png"
+        imagePath = "sprites/consumables.png"
     baseImage = Image.open(imagePath)
     topLeftX = (x * enhancersWidth) + (x * enhancersPixelGap) + 1
     topLeftY = (y * enhancersHeight) + (y * enhancersPixelGap) + 1
@@ -290,7 +290,7 @@ nonIntCoordsDict = {
 def returnCroppedImageByName(subset, name, suit=None, forPygame=False):
     if subset == "playing":
         if suit is not None:
-            baseImageName = "cardSprites/playing.png"
+            baseImageName = "sprites/playing.png"
             if name.isdigit():
                 xCoord = int(name) - 1
             else:
@@ -299,10 +299,10 @@ def returnCroppedImageByName(subset, name, suit=None, forPygame=False):
 
         else:
             if name in ["polychrome", "holographic", "foil", "debuffed"]:
-                baseImageName = "cardSprites/editions.png"
+                baseImageName = "sprites/editions.png"
                 coordsDict = editionsCoordsDict
             else:
-                baseImageName = "cardSprites/enhancers.png"
+                baseImageName = "sprites/enhancers.png"
                 coordsDict = enhancersCoordsDict
             coords = coordsDict[name]
         baseImage = Image.open(baseImageName)
@@ -419,7 +419,7 @@ packX = 69
 packY = 93
 
 def createPackImage(pack):
-    baseImage = Image.open("cardSprites/packs.png")
+    baseImage = Image.open("sprites/packs.png")
     validCoords = packCoordsDict[pack.subset][pack.size]
     if len(validCoords) > 1:
         random.shuffle(validCoords)
@@ -434,7 +434,7 @@ def createPackImage(pack):
 
 # def generateCardPairingList():
 #     iterator = 0
-#     # pairList = openjson("cardToArcuo old.json", True)
+#     # pairList = openjson("cardToArcuo final.json", True)
 #     pairList = []
 #     # playing cards (8320, 160/card)
 #     for suit in ["S", "C", "H", "D"]:

@@ -1,6 +1,6 @@
 {
     "Pluto": {"hand": "High Card",
-              "addition": [1, 5]},
+              "addition": [1, 10]},
     "Mercury": {"hand": "Pair",
               "addition": [1, 15]},
     "Uranus": {"hand": "Two Pair",

@@ -189,10 +189,6 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
                 chain.add("mult", "Debuffed!", card, chips, mult)
             else:
                 triggerCard(card, save, chain)
-                if card.seal == "gold":
-                    save.money += 3
-                    chain.add("visual", "+$3", card, chips, mult)
-                    # print("Earned $3 from a gold seal!")
 
 
     # here comes most of the joker logic in the game oh boy
@@ -391,7 +387,6 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
             # TODO: Planet card use check (constellation)
 
             # TODO: Card score use check (hiker)
-            #  (this has to be global per value of card otherwise I'll run out of fiducials)
 
             # end-of-hand ace and straight check (superposition)
             if jokerName == "Superposition":
@@ -535,6 +530,12 @@ def triggerCard(card, save, chain):
     # A = 11 chips, face cards = 10 chips, all numbered cards are = their value
     global chips
     global mult
+
+    if card.seal == "gold":
+        save.money += 3
+        chain.add("visual", "+$3", card, chips, mult)
+        # print("Earned $3 from a gold seal!")
+
     if card.enhancement != "stone":
         try:
             baseCardChipAmount = int(card.number)

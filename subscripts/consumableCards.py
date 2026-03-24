@@ -5,23 +5,37 @@ from subscripts.spectralCards import useSpectralCard, Spectral
 from subscripts.spacesavers import *
 import math
 
-
-# once the user makes a selection for the consumable, this asks them whether they want to use or sell it
-# and also checks if it can be used right now
-
-# TODO: Finish this once the save system is working with the shop
-def CLUseOrSellConsumables(consumable, save):
-    if consumableCanBeUsedImmediately(consumable):
-        return
-
 # TODO: eventually this will replace all the garbage in main.py it's not finished yet
-def useConsumable(consumable, save):
-    if isinstance(consumable, Planet):
-        usePlanetCard(consumable, save)
-    if isinstance(consumable, Tarot):
-        useTarotCard(consumable, save)
-    if isinstance(consumable, Spectral):
-        useSpectralCard(consumable, save)
+def useConsumable(selectedConsumable, foundCards, save, currentTime):
+    if isinstance(selectedConsumable, Tarot):
+        selectedHand = prepareSelectedCards(save, foundCards)
+        success, successMessage = useTarotCard(selectedConsumable, selectedHand, save, True)
+        chain = EventChain()
+        canInteract = False
+        lastEventTime = currentTime
+        chainIndex = 0
+        if success:
+            chain.add("chips", successMessage, selectedConsumable, 0, 0)
+            save.consumables.remove(selectedConsumable)
+            save.lastUsedTarotOrPlanet = selectedConsumable
+        else:
+            chain.add("mult", successMessage, selectedConsumable, 0, 0)
+    if isinstance(selectedConsumable, Spectral):
+        selectedHand = prepareSelectedCards(save, foundCards)
+        success, successMessage = useSpectralCard(selectedConsumable, selectedHand, save, True)
+        chain = EventChain()
+        canInteract = False
+        lastEventTime = currentTime
+        chainIndex = 0
+        if success:
+            chain.add("chips", successMessage, selectedConsumable, 0, 0)
+            save.consumables.remove(selectedConsumable)
+        else:
+            chain.add("mult", successMessage, selectedConsumable, 0, 0)
+    elif isinstance(selectedConsumable, Planet):
+        usePlanetCard(selectedConsumable, save)
+        save.consumables.remove(selectedConsumable)
+        save.lastUsedTarotOrPlanet = selectedConsumable
 
 
 def getConsumableSellPrice(consumable, save):

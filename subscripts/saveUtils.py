@@ -187,7 +187,7 @@ def createSaveFromDict(saveDict):
 def saveGame(save):
     savejson("save", save.toDict())
 
-def createBlankSave(deck, irl):
+def createBlankSave(deck):
     handLevels = {
         "High Card": {"level": 1, "chips": 5, "mult": 1},
         "Pair": {"level": 1, "chips": 10, "mult": 2},
@@ -237,7 +237,7 @@ def createBlankSave(deck, irl):
         "playedCards": [],
         "score": 0,
         "round": 1,
-        "irl": irl,
+        "irl": True,
         "lastUsedTarotOrPlanet": None,
         "startingHands": 4,
         "startingDiscards": 3,
