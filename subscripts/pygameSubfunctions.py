@@ -1,10 +1,11 @@
-import pygame, cv2, textwrap, random, math, zipfile, os
+import pygame, cv2, textwrap, random, math, zipfile, os, shutil
 import numpy as np
 from cardCreationAndRecognition.finalArcuoTracking import pygameDisplayFoundCards
 from subscripts.consumableCards import getConsumableSellPrice
 from subscripts.handFinderAndPointsAssigner import findBestHand
 from PIL import Image
-from cardCreationAndRecognition.cardImageCreator import createImageFromCard, createPackImage, getConsumableImageByCoords
+from cardCreationAndRecognition.cardImageCreator import createImageFromCard, createPackImage, \
+    getConsumableImageByCoords, createTaggedCardImage
 from subscripts.cardUtils import Card
 from subscripts.planetCards import Planet
 from subscripts.packs import Pack
@@ -13,6 +14,11 @@ from subscripts.jokers import Joker
 from subscripts.spectralCards import Spectral
 from subscripts.spacesavers import *
 from pathlib import Path
+from subscripts.inputHandling import prepareCardForPrinting, clearPrintFolder
+
+
+# TODO: idk how much it'll matter for performance since it's not like I need high fps for balatro but eventually cache
+#  all the frombytes image stuff too
 
 def drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsScan, backupDetectedCardsScanTime,
                                   currentTime, save, frame, cutoff):
@@ -142,7 +148,7 @@ def overlayStuffOnCard(card, debuffed, screen):
     if debuffed:
         debuffedStr = "Debuffed"
     cachedImagePath = f"imageCache/{debuffedStr}{card.toString()}.png"
-    if Path(cachedImagePath).is_file:
+    if Path(cachedImagePath).is_file():
         rawImg = Image.open(cachedImagePath)
     else:
         rawImg = createImageFromCard(card, True, debuffed)
@@ -213,9 +219,8 @@ def drawBlindInfoScreen(save, blindInfo, screen, colors, font, origin, mode, chi
     drawText(screen, dollarText, font, colors.yellow, (rewardPanelX + 55, rewardPanelY + 40), "left", 20)
 
 # TODO: when it's the boss blind the outlines change to the color of the boss blind
-def drawLeftBar(save, font, screen, colors, handType, level, score, chips, mult, camIndex):
+def drawLeftBar(save, font, screen, colors, handType, level, score, chips, mult, camIndex, rawChipSymbol):
     screenHeight = screen.height
-    rawChipSymbol = pygame.image.load("sprites/chips.png").subsurface(0, 0, 58, 58)
     chipSymbol = pygame.transform.scale(rawChipSymbol, (30, 30))
 
     leftBarOrigin = 20
@@ -504,10 +509,11 @@ def displayChainEvent(event, screen, font):
     drawText(screen, event.text, font, (255, 255, 255), (newX, newY-10), "center")
 
 
-def drawBlindSelectScreen(save, font, screen, colors):
+def drawBlindSelectScreen(save, font, screen, colors, chipSymbol):
     blindButtons = []
     blindIndexToBlindInfo = [("Small Blind", 1, 3), ("Big Blind", 1.5, 4), ("Boss Blind", 2, 5)]
-    def drawBlindPopup(save, font, screen, colors, startX, selectionStatus, color, blindInfo):
+
+    def drawBlindPopup(save, font, screen, colors, startX, selectionStatus, color, blindInfo, chipSymbol):
         y = 300
         selectButtonColor = colors.yellow
         if selectionStatus != "Select":
@@ -533,7 +539,7 @@ def drawBlindSelectScreen(save, font, screen, colors):
 
         drawBlindInfoScreen(
             save, blindInfo, screen, colors, font, (startX + 25, y + 55), "selection",
-            pygame.image.load("sprites/chips.png").subsurface(0, 0, 58, 58))
+            chipSymbol)
 
         if blindInfo[0] == "Boss Blind":
             drawText(screen, "Up The Ante", font, colors.yellow, (startX + 100, y + 265), size=30)
@@ -564,15 +570,17 @@ def drawBlindSelectScreen(save, font, screen, colors):
         elif i < save.blindIndex:
             selectionStatus = "Defeated"
         drawBlindPopup(save, font, screen, colors, startX, selectionStatus, colors.blindColors[i],
-                       blindIndexToBlindInfo[i])
+                       blindIndexToBlindInfo[i], chipSymbol)
         startX += 220
 
     return blindButtons
 
 
-def drawShop(save, font, screen, colors, mousePos):
+def drawShop(save, font, screen, colors, mousePos, shopImage):
     shop = save.shop
 
+    shopImage = pygame.transform.scale(shopImage, (300, 150))
+    screen.blit(shopImage, (20, 40))
     # backgrounds
     shopOriginX = 350
     shopOriginY = 340
@@ -849,10 +857,18 @@ def drawMenuSpiral(screen, menuPoints):
 
 
 
-def drawMenu(screen, font, colors):
-    logo = pygame.image.load("sprites/realatro logo.png")
+def drawMenu(screen, font, colors, save, mousePos, logo, menuImage):
     scaledLogo = pygame.transform.scale(logo, (1000, 500))
     screen.blit(scaledLogo, (145, 20))
+
+    if menuImage.get_size()[0] == 69:
+        scaleX = 140
+        imX = 570
+    else:
+        scaleX = 180
+        imX = 550
+    menuImage = pygame.transform.scale(menuImage, (scaleX, 180))
+    screen.blit(menuImage, (imX, 170))
 
     buttons = []
     drawRect(screen, colors.lightUI, (320, 500, 640, 150), colors.darkUI, 8)
@@ -897,6 +913,33 @@ def drawMenu(screen, font, colors):
         "rect": exitRect
     })
 
+    addPrevRect = (1128, 2, 150, 100)
+    if save.addPreviouslyPrintedCards:
+        addPrevEnabledColor = colors.green
+        addPrevEnabledText = ""
+    else:
+        addPrevEnabledColor = colors.red
+        addPrevEnabledText = "NOT "
+    drawRect(screen, addPrevEnabledColor, addPrevRect, colors.lightUI, round=8)
+    drawText(screen, addPrevEnabledText + "ADDDING", font, colors.white, (1203, 30), size=30)
+    drawText(screen, "OLD CARDS", font, colors.white, (1203, 55), size=30)
+
+    if pygame.Rect(addPrevRect).collidepoint(mousePos):
+        addOldCardsDesc = (
+            "Keep this off unless you lost some of the cards you already printed out, or if you're using "
+            "cards you printed from another computer. Check the readme for an explanation for what this "
+            "does, but it's pretty confusing!")
+        addOldCardsDesc = textwrap.fill(addOldCardsDesc, 20)
+        drawRect(screen, colors.lightUI, (1000, 105, 276, 370), colors.darkUI, round=8)
+        drawText(screen, addOldCardsDesc, font, colors.white, (1150, 120), size=30)
+
+    buttons.append({
+        "name": "addOldCards",
+        "rect": addPrevRect
+    })
+
+    drawText(screen, "Original game by localthunk+playstack", font, colors.white, (1090, 670), size=20)
+    drawText(screen, "Created by absence (please don't sue me)", font, colors.white, (1090, 690), size=20)
     return buttons
 
 def extractBalatroSprites():
@@ -913,6 +956,18 @@ def extractBalatroSprites():
         extractImage(zf, "resources/textures/1x/boosters.png", "packs")
         extractImage(zf, "resources/textures/1x/8BitDeck_opt2.png", "playing")
         extractImage(zf, "resources/textures/2x/chips.png", "chips")
+        extractImage(zf, "resources/textures/1x/ShopSignAnimation.png", "shopImage")
+
+    savejson("printedCards", [])
+    savejson("sentToPrinter", [])
+    clearPrintFolder()
+    for suit in ["S", "H", "C", "D"]:
+        for num in ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]:
+            prepareCardForPrinting(Card({"suit": suit, "number": num}), keep=True)
+
+    shutil.copy("print/A♠.png", "sprites")
+
+    return loadImages()
 
 # idk why but chatGPT says I have to do all this complicated shit to extract it without
 # also extracting the subfolders and renaming it
@@ -922,6 +977,43 @@ def extractImage(zf, texturePath, newName):
 
         with open(output_path, "wb") as target:
             target.write(source.read())
+
+def drawExtractConfirmPopup(screen, font, colors, logo):
+    scaledLogo = pygame.transform.scale(logo, (1000, 500))
+    screen.blit(scaledLogo, (145, 20))
+
+    buttons = []
+    drawRect(screen, colors.lightUI, (320, 300, 640, 300), colors.darkUI, 8)
+
+    confirmationMessage = textwrap.fill(
+        "Are you sure? This will erase Realatro's memory of all the cards you printed out!\n(also you already did it)", 40)
+    drawText(screen, confirmationMessage, font, colors.white, (640, 350), size=30)
+
+    yesRect = (340, 450, 280, 130)
+    drawRect(screen, colors.green, yesRect, round=8)
+    drawText(screen, "YES", font, colors.white, (480, 500), size=50)
+
+    buttons.append({
+        "name": "yes",
+        "rect": yesRect
+    })
+
+    noRect = (620, 450, 280, 130)
+    drawRect(screen, colors.red, noRect, round=8)
+    drawText(screen, "NO", font, colors.white, (760, 500), size=50)
+
+    buttons.append({
+        "name": "no",
+        "rect": noRect
+    })
+
+    return buttons
+
+def loadImages():
+    rawChipImage = pygame.image.load("sprites/chips.png").subsurface(0, 0, 58, 58)
+    shopImage = pygame.image.load("sprites/shopImage.png").subsurface(0, 0, 113, 57)
+    menuImage = pygame.image.load("sprites/A♠.png")
+    return rawChipImage, shopImage, menuImage
 
 def drawRect(screen, color, rect, outline=None, round=None):
     if round is not None:

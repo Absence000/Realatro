@@ -13,7 +13,6 @@ class Pack:
             self.pickAmount = 2
 
     # returns the proper amount of cards if opened
-    # TODO: I think standard packs can have duplicates but the rest I'm not sure
     def open(self, save):
         return generateWeightedRandomCards(self.cardType, save, self.length, generateSpecialSpectrals=True)
 
@@ -69,7 +68,6 @@ packWeightDict = {
 sizes = ["normal", "jumbo", "mega"]
 addedPacks = ["standard", "arcana", "celestial", "buffoon", "spectral"]
 
-# TODO: add support for buffoon and spectral packs
 def generatePackForSale():
     packOptions = []
     packWeights = []

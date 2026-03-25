@@ -7,7 +7,7 @@ from subscripts.saveUtils import *
 from subscripts.colorManagement import Colors
 from subscripts.eventChainManagement import EventChain, Event
 from subscripts.packs import Pack
-from subscripts.cardUtils import Card, addTarotCardIfRoom
+from subscripts.cardUtils import Card, addTarotCardIfRoom, createCardFromBinary
 from subscripts.jokers import Joker
 from subscripts.planetCards import Planet, usePlanetCard
 from subscripts.shop import newItemIsConsumable
@@ -79,8 +79,19 @@ def main():
     askingAboutImmediateUse = False
     running = True
     inGame = False
+    extractConfirmPopup = False
 
     menuPoints = generateStartingMenuPoints()
+
+    # images
+    if Path("sprites/playing.png").is_file():
+        rawChipImage, shopImage, menuImage = loadImages()
+    else:
+        rawChipImage = None
+        shopImage = None
+        menuImage = pygame.image.load("sprites/error sign.png")
+    logo = pygame.image.load("sprites/realatro logo.png")
+
 
     while running:
         rawMouseX, rawMouseY = pygame.mouse.get_pos()
@@ -123,26 +134,44 @@ def main():
                     inGame=False
 
         # menu
+        buttons = []
+
         if not inGame:
             screen.fill([0, 0, 255])
             menuPoints = drawMenuSpiral(screen, menuPoints)
-            buttons += drawMenu(screen, font, colors)
+            if extractConfirmPopup:
+                buttons += drawExtractConfirmPopup(screen, font, colors, logo)
+            else:
+                buttons += drawMenu(screen, font, colors, save, mousePos, logo, menuImage)
             if pressedButton == "exit":
                 pressedButton = ""
-                os.rmdir("imageCache")
-                # idk if I need this
+                shutil.rmtree("imageCache")
+                # idk if I need exist_ok but just in case
                 os.makedirs("imageCache", exist_ok=True)
-                running=False
+                running = False
             elif pressedButton == "load":
                 pressedButton = ""
-                inGame=True
+                inGame = True
             elif pressedButton == "new":
                 pressedButton = ""
                 save = createBlankSave("standard")
-                inGame=True
+                inGame = True
             elif pressedButton == "extract":
                 pressedButton = ""
-                extractBalatroSprites()
+                if Path("sprites/playing.png").is_file():
+                    extractConfirmPopup = True
+                else:
+                    rawChipImage, shopImage, menuImage = extractBalatroSprites()
+            elif pressedButton == "addOldCards":
+                pressedButton = ""
+                save.addPreviouslyPrintedCards = not save.addPreviouslyPrintedCards
+            elif pressedButton == "yes":
+                pressedButton = ""
+                rawChipImage, shopImage, menuImage = extractBalatroSprites()
+                extractConfirmPopup = False
+            elif pressedButton == "no":
+                pressedButton = ""
+                extractConfirmPopup = False
         # game
         else:
             screen.fill(colors.backgroundColor)
@@ -152,13 +181,13 @@ def main():
                 else:
                     freezeFrame = None
 
-                buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex)
+                buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex, rawChipImage)
 
                 foundCards, backupDetectedCardsScan, backupDetectedCardsScanTime, rawFrame = (
                     drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsScan,
                                                   backupDetectedCardsScanTime, currentTime, save, freezeFrame, "middle"))
 
-                buttons += drawBlindSelectScreen(save, font, screen, colors)
+                buttons += drawBlindSelectScreen(save, font, screen, colors, rawChipImage)
 
                 consumableButtons, selectedConsumable = drawConsumables(save, screen, colors, font, mousePos)
                 buttons += consumableButtons
@@ -218,8 +247,6 @@ def main():
                 foundCards, backupDetectedCardsScan, backupDetectedCardsScanTime, rawFrame = (
                     drawWebcamAndReturnFoundCards(cap, lookupTable, screen, backupDetectedCardsScan,
                                                   backupDetectedCardsScanTime, currentTime, save, freezeFrame, None))
-
-                buttons = []
 
                 if not canInteract:
                     # this part took so long to figure out holy shit
@@ -303,7 +330,7 @@ def main():
                         displayChips = handInfo["chips"]
                         displayMult = handInfo["mult"]
 
-                buttons += drawLeftBar(save, font, screen, colors, handType, level, score, displayChips, displayMult, camIndex)
+                buttons += drawLeftBar(save, font, screen, colors, handType, level, score, displayChips, displayMult, camIndex, rawChipImage)
 
                 buttons += drawButtons(save, screen, colors, font)
                 consumableButtons, selectedConsumable = drawConsumables(save, screen, colors, font, mousePos)
@@ -356,7 +383,7 @@ def main():
                         save.jokersInPlay = [joker for joker in save.jokersInPlay if joker.id != selectedJoker.id]
 
             elif save.state == "shop":
-                buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex)
+                buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex, rawChipImage)
 
                 if not canInteract:
                     freezeFrame = rawFrame
@@ -378,7 +405,7 @@ def main():
                     selectedJoker = None
 
                 if askingAboutImmediateUse: buttons += drawImmediateUsePopup(save, font, screen, colors, item)
-                else: buttons += drawShop(save, font, screen, colors, mousePos)
+                else: buttons += drawShop(save, font, screen, colors, mousePos, shopImage)
 
                 if len(chain.events) > 0:
                     if currentTime - lastEventTime < 0.25:
@@ -475,7 +502,7 @@ def main():
                             pressedButton = ""
                             save.consumables.append(item)
             elif save.state in ["openingPack", "openingPackFromTag"]:
-                buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex)
+                buttons = drawLeftBar(save, font, screen, colors, "", "", 0, 0, 0, camIndex, rawChipImage)
 
                 if not canInteract:
                     freezeFrame = rawFrame

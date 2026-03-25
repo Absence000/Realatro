@@ -78,6 +78,7 @@ class Save:
         self.startingDiscards = saveDict["startingDiscards"]
         self.ectoUses = saveDict["ectoUses"]
         self.firstShopEncountered = saveDict["firstShopEncountered"]
+        self.addPreviouslyPrintedCards = saveDict["addPreviouslyPrintedCards"]
 
 
     def toDict(self):
@@ -143,7 +144,8 @@ class Save:
             "startingHands": self.startingHands,
             "startingDiscards": self.startingDiscards,
             "ectoUses": self.ectoUses,
-            "firstShopEncountered": self.firstShopEncountered
+            "firstShopEncountered": self.firstShopEncountered,
+            "addPreviouslyPrintedCards": self.addPreviouslyPrintedCards
         }
         return saveDict
 
@@ -242,7 +244,8 @@ def createBlankSave(deck):
         "startingHands": 4,
         "startingDiscards": 3,
         "ectoUses": 0,
-        "firstShopEncountered": True
+        "firstShopEncountered": True,
+        "addPreviouslyPrintedCards": False
     })
 
 def addToJokerAttribute(save, jokerName, attribute, amount):

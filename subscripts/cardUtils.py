@@ -107,6 +107,10 @@ binaryDict = {
     "nonNumericalNumber": ["J", "Q", "K", "A"]
 }
 
+
+# TODO: rewrite this so it doesn't have to go through the whole deck every frame to see if the card is in play
+#  somehow this awful shit doesn't impact performance that much though? idk how
+#  also clean up the repetitive stuff I guess
 def createCardFromBinary(id, binary, save, printedCards, sentToPrinter):
     formattedBinary = str(bin(binary)[2:]).zfill(17)
     subset = binaryToAttribute("subset", formattedBinary[0:3])
@@ -137,10 +141,12 @@ def createCardFromBinary(id, binary, save, printedCards, sentToPrinter):
         # if this ID has never been seen before it adds it to printedCards.json
         # fingers crossed it doesn't scan a bunch of things as IDs and clog it up
         # to stop this, if the new ID was never seen on sentToPrinter.json it won't be added to printedCards.json
-        if id not in printedCards and id in sentToPrinter:
-            printedCards.append(id)
-            print(f"New ID found! {id}")
-            savejson("printedCards", printedCards)
+        # unless you have addPreviouslyPrintedCards on
+        if id not in printedCards:
+            if save.addPreviouslyPrintedCards or id in sentToPrinter:
+                printedCards.append(id)
+                print(f"New ID found! {id}")
+                savejson("printedCards", printedCards)
         if cardIsAccountedFor:
             return card
         else:
@@ -178,10 +184,11 @@ def createCardFromBinary(id, binary, save, printedCards, sentToPrinter):
         # if this ID has never been seen before it adds it to printedCards.json
         # fingers crossed it doesn't scan a bunch of things as IDs and clog it up
         # to stop this, if the new ID was never seen on sentToPrinter.json it won't be added to printedCards.json
-        if id not in printedCards and id in sentToPrinter:
-            printedCards.append(id)
-            print(f"New ID found! {id}")
-            savejson("printedCards", printedCards)
+        if id not in printedCards:
+            if save.addPreviouslyPrintedCards or id in sentToPrinter:
+                printedCards.append(id)
+                print(f"New ID found! {id}")
+                savejson("printedCards", printedCards)
         if cardIsAccountedFor:
             return card
         else:
@@ -217,10 +224,11 @@ def createCardFromBinary(id, binary, save, printedCards, sentToPrinter):
         # if this ID has never been seen before it adds it to printedCards.json
         # fingers crossed it doesn't scan a bunch of things as IDs and clog it up
         # to stop this, if the new ID was never seen on sentToPrinter.json it won't be added to printedCards.json
-        if id not in printedCards and id in sentToPrinter:
-            printedCards.append(id)
-            print(f"New ID found! {id}")
-            savejson("printedCards", printedCards)
+        if id not in printedCards:
+            if save.addPreviouslyPrintedCards or id in sentToPrinter:
+                printedCards.append(id)
+                print(f"New ID found! {id}")
+                savejson("printedCards", printedCards)
 
         if jokerIsAccountedFor:
             return joker

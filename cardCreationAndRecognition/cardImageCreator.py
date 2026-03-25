@@ -353,6 +353,7 @@ def createTaggedCardImage(card, lookupTable):
     cardImage = createImageFromCard(card)
     alreadyPrinted = openjson("printedCards")
 
+    # gives it a new tag that hasn't been printed out yet
     iterator = 0
     cardBinary = card.toBinary()
     for binary in lookupTable:

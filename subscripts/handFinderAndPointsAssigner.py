@@ -216,13 +216,19 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
             if jokerName == "Square Joker":
                 if len(hand) == 4:
                     addToJokerAttribute(save, "Square Joker", "chip", 4)
-                    chain.add("visual", "+4", joker, chips, mult)
+                    chain.add("visual", "+4 chips", joker, chips, mult)
 
-            # hand dependent end-of-hand check jokers (spare trousers)
-            if jokerName == "Spare Trousers":
+            # hand dependent end-of-hand check jokers (spare trousers, runner)
+            if jokerName in ["Spare Trousers", "Runner"]:
                 if handType == jokerData["hand"] or jokerData["hand"] in handContainerDict[handType]:
-                    addToJokerAttribute(save, "Spare Trousers", "mult", 2)
-                    chain.add("visual", "+2", joker, chips, mult)
+                    if jokerName == "Spare Trousers":
+                        addToJokerAttribute(save, "Spare Trousers", "mult", 2)
+                        chain.add("visual", "+2 mult", joker, chips, mult)
+                    else:
+                        addToJokerAttribute(save, "Runner", "chips", 2)
+                        chain.add("visual", "+15 chips", joker, chips, mult)
+
+
 
             # always active end-of-hand check jokers:
             # joker, misprint, gros michel, ice cream, cavendish, square joker, vampire, hologram, fortune teller,
@@ -377,7 +383,7 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
 
             # end-of-hand remaining deck check (blue joker)
             if jokerName == "Blue Joker":
-                cardsRemaining = len(save.deck)
+                cardsRemaining = len(save.deck) - len(save.playedCards)
                 jokerChips = jokerData["chip"] * cardsRemaining
                 chips += jokerChips
                 chain.add("chips", jokerChips, joker, chips, mult)
@@ -434,7 +440,7 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
             # this is dumb but idk how else to do it
             if jokerName == "Stone Joker":
                 jokerChips = 0
-                for card in hand + unselectedHand + save.deck:
+                for card in save.deck:
                     if card.enhancement == "stone":
                         jokerChips += jokerData["chips"]
                 if jokerChips > 0:
