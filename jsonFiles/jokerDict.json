@@ -542,7 +542,7 @@
         "rarity": "Common",
         "description": "Every played card counts in scoring",
         "type": "effect",
-        "finished": true
+        "finished": true,
         "position": [6, 10]
     },
     "Blue Joker": {
