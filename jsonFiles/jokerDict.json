@@ -206,7 +206,8 @@
         "rarity": "Uncommon",
         "description": "All Flushes and Straights can be made with 4 cards",
         "type": "effect",
-        "position": [6, 6]
+        "position": [6, 6],
+        "finished": true
     },
     "Mime": {
         "id": 19,
@@ -240,7 +241,8 @@
         "type": "chip",
         "condition": "discardAmount",
         "chip": 30,
-        "position": [1, 2]
+        "position": [1, 2],
+        "finished": true
     },
     "Mystic Summit": {
         "id": 23,
@@ -250,7 +252,8 @@
         "type": "mult",
         "condition": "zeroDiscards",
         "mult": 15,
-        "position": [2, 2]
+        "position": [2, 2],
+        "finished": true
     },
     "Marble Joker": {
         "id": 24,
@@ -264,10 +267,12 @@
         "id": 25,
         "cost": 5,
         "rarity": "Uncommon",
-        "description": "x4 Mult every 6 hands played",
+        "description": "x4 Mult every 6 hands played ({self.handsRemaining} hands remaining)",
+        "handsRemaining": 5,
         "type": "multmult",
         "condition": "everySixHands",
-        "position": [4, 2]
+        "position": [4, 2],
+        "finished": true
     },
     "8 Ball": {
         "id": 26,
@@ -297,7 +302,8 @@
         "description": "Retrigger all played cards in final hand of the round",
         "type": "retrig",
         "condition": "finalHand",
-        "position": [4, 7]
+        "position": [4, 7],
+        "finished": true
     },
     "Raised Fist": {
         "id": 29,
@@ -336,7 +342,8 @@
         "description": "Gives x0.2 Mult for each Steel Card in your full deck",
         "type": "multmult",
         "condition": "steelCard",
-        "mult": 0.2,
+        "multmult": 0.2,
+        "finished": true,
         "position": [7, 2]
     },
     "Scary Face": {
@@ -458,8 +465,10 @@
         "id": 44,
         "cost": 6,
         "rarity": "Common",
-        "description": "This Joker gains +1 Mult per consecutive hand played without a scoring face card",
+        "description": "This Joker gains +1 Mult per consecutive hand played without a scoring face card (currently +{self.mult} mult)",
         "type": "mult",
+        "mult": 0,
+        "finished": true,
         "position": [1, 6]
     },
     "Space Joker": {
@@ -533,6 +542,7 @@
         "rarity": "Common",
         "description": "Every played card counts in scoring",
         "type": "effect",
+        "finished": true
         "position": [6, 10]
     },
     "Blue Joker": {
@@ -582,8 +592,9 @@
         "id": 58,
         "cost": 4,
         "rarity": "Common",
-        "description": "-1 Mult per hand played. -1 Mult per discard",
+        "description": "-1 Mult per hand played. -1 Mult per discard. Currently +{self.mult} mult",
         "type": "mult",
+        "mult": 0,
         "position": [2, 11]
     },
     "Superposition": {
@@ -599,7 +610,7 @@
         "id": 60,
         "cost": 4,
         "rarity": "Common",
-        "description": "Earn $4 if a poker hand is a f[hand], poker hand changes at end of round",
+        "description": "Earn $4 if a poker hand is a {self.hand}, poker hand changes at end of round",
         "type": "econ",
         "hand": "empty",
         "money": 4,
@@ -1043,7 +1054,8 @@
         "rarity": "Uncommon",
         "description": "x3 Mult on final hand of round",
         "type": "multmult",
-        "position": [2, 1]
+        "position": [2, 1],
+        "finished": true
     },
     "Sock and Buskin": {
         "id": 109,

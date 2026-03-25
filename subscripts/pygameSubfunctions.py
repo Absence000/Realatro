@@ -474,7 +474,7 @@ def drawCardCounter(save, font, screen, colors, foundCards):
     if mode == "analysis":
         return cardToAnalyze, otherCards
     else:
-        handType = findBestHand(handCards)[0]
+        handType = findBestHand(handCards, save)[0]
         handInfo = save.handLevels[handType]
         return handType, handInfo
 

@@ -344,7 +344,7 @@ def main():
                                 canInteract = False
                                 lastPlayedHandName = handType
                                 points, chain, selectedHand = (
-                                    calcPointsFromHand(selectedHand, findBestHand(selectedHand), save.hand, save))
+                                    calcPointsFromHand(selectedHand, findBestHand(selectedHand, save), save.hand, save))
                                 lastEventTime = currentTime
                                 chainIndex = 0
                     elif pressedButton == "discard":

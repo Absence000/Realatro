@@ -248,12 +248,15 @@ def createBlankSave(deck):
         "addPreviouslyPrintedCards": False
     })
 
-def addToJokerAttribute(save, jokerName, attribute, amount):
+def addToJokerAttribute(save, jokerName, attribute, amount, override=False):
     for joker in save.jokersInPlay:
         if joker.name == jokerName:
             if attribute not in joker.data:
                 raise ValueError(f"{jokerName} doesn't have {attribute}")
-            joker.data[attribute] += amount
+            if override:
+                joker.data[attribute] = amount
+            else:
+                joker.data[attribute] += amount
             return
 
     raise ValueError(f"{jokerName} not found")

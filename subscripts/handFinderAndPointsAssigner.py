@@ -10,7 +10,7 @@ import random
 
 # figures out what poker hand the player has, and specifies what cards to add the points to
 # TODO: add an override for the joker that changes how many cards that get scored points
-def findBestHand(hand):
+def findBestHand(hand, save):
     handValueList = []
     handSuitList = []
     handLength = 0
@@ -22,8 +22,8 @@ def findBestHand(hand):
             else:
                 handSuitList.append(card.suit)
             handLength += 1
-    straight = handIsStraight(handValueList)
-    flush = handIsFlush(handSuitList)
+    straight = handIsStraight(handValueList, save)
+    flush = handIsFlush(handSuitList, save)
     countList = numberOfMatchingCards(handValueList)
 
 
@@ -79,30 +79,65 @@ def findBestHand(hand):
 # returns true if the hand is a straight (all the numbers are in a row)
 # aces can be either 1 or 14 in this but not both
 # TODO: Add overrides for the hand value length requirement joker
-def handIsStraight(handValueList):
-    if len(handValueList) == 5:
+def handIsStraight(handValueList, save):
+    if len(handValueList) >= 4:
         testLists = [turnHandValueIntoNumbersAndSort(handValueList), turnHandValueIntoNumbersAndSort(handValueList, 1)]
         for testList in testLists:
-            if valuesAreConsecutive(testList):
+            if valuesAreConsecutive(testList, save):
                 return True
     return False
 
 
 # checks if all the values in the list are consecutive
 # TODO: add something for the shortcut joker to work
-def valuesAreConsecutive(testList):
-    return all(testList[i] + 1 == testList[i + 1] for i in range(len(testList) - 1))
+def valuesAreConsecutive(testList, save):
+    if save.hasJoker("Four Fingers"):
+        # gotta remove the duplicates
+        testList = sorted(set(testList))
+
+        if len(testList) < 4:
+            return False
+
+        consecutiveStreak = 1
+        iterator = 0
+        for i in range(1, len(testList)):
+            if testList[i] == testList[i - 1] + 1:
+                consecutiveStreak += 1
+                if consecutiveStreak >= 4:
+                    return True
+            else:
+                consecutiveStreak = 1
+
+        return False
+    else:
+        if len(testList) == 5:
+            return all(testList[i] + 1 == testList[i + 1] for i in range(len(testList) - 1))
+        return False
 
 
 # returns true if the hand is a flush (all the suits are the same)
 # works with wild cards
 # TODO: add hand limit stuff
-def handIsFlush(handSuitList):
-    if len(handSuitList) == 5:
-        if "W" not in handSuitList:
-            return len(set(handSuitList)) == 1
-        elif len(set(handSuitList)) <= 2:
+def handIsFlush(handSuitList, save):
+    if save.hasJoker("Four Fingers"):
+        countDict = Counter(handSuitList)
+        wildCount = countDict.get("W", 0)
+        for suit, count in countDict.items():
+            if suit == "W":
+                continue
+            if count + wildCount == 4:
+                return True
+
+        if wildCount >= 4:
             return True
+
+        return False
+    else:
+        if len(handSuitList) == 5:
+            if "W" not in handSuitList:
+                return len(set(handSuitList)) == 1
+            elif len(set(handSuitList)) <= 2:
+                return True
 
 
 # reformats the card number list as a list of [number, timesInHand]
@@ -150,7 +185,10 @@ mult = 0
 def calcPointsFromHand(hand, handData, unselectedHand, save):
     # gets the base chips and mult
     handType = handData[0]
-    affectedCards = handData[1]
+    if save.hasJoker("Splash"):
+        affectedCards = "all"
+    else:
+        affectedCards = handData[1]
 
     global chips
     global mult
@@ -217,6 +255,7 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
                 if len(hand) == 4:
                     addToJokerAttribute(save, "Square Joker", "chip", 4)
                     chain.add("visual", "+4 chips", joker, chips, mult)
+                    jokerData = joker.data
 
             # hand dependent end-of-hand check jokers (spare trousers, runner)
             if jokerName in ["Spare Trousers", "Runner"]:
@@ -227,6 +266,7 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
                     else:
                         addToJokerAttribute(save, "Runner", "chips", 2)
                         chain.add("visual", "+15 chips", joker, chips, mult)
+                    jokerData = joker.data
 
 
 
@@ -332,12 +372,31 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
             #         if card.enhancement == "steel":
             #             steelCardMult *= triggerSteelCard(card)
 
-            # TODO: end-of-hand check discard/hand amount jokers (banner, mythic summit, green),
-            #  make the save to update per hand so I can track it
+            # end-of-hand check discard/hand amount jokers (banner/mythic summit)
+            if jokerName == "Banner":
+                jokerChips = 30 * save.discards
+                chips += jokerChips
+                chain.add("chip", jokerChips, joker, chips, mult)
+
+            if jokerName == "Mythic Summit":
+                if save.discards == 0:
+                    mult += 15
+                    chain.add("mult", 15, joker, chips, mult)
+
 
             # TODO: Every 6 hands played check (Loyalty Card)
+            if jokerName == "Loyalty Card":
+                addToJokerAttribute(save, "Loyalty Card", "handsRemaining", -1)
+                if jokerData["handsRemaining"] == 0:
+                    mult *= 4
+                    chain.add("multmult", 4, joker, chips, mult)
+                    addToJokerAttribute(save, "Loyalty Card", "handsRemaining", 5)
 
-            # TODO: Final hand check (Dusk, Acrobat)
+            # final hand check (acrobat)
+            if jokerName == "Acrobat":
+                if save.hands == 1:
+                    mult *= 3
+                    chain.add("multmult", 3, joker, chips, mult)
 
             # end-of-hand check lowest rank (raised fist)
             if jokerName == "Raised Fist":
@@ -355,6 +414,22 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
             # TODO: # of times poker hand has been played tracking (Supernova)
 
             # TODO: Consecutive hand played without a scoring face card tracking (Ride The Bus)
+            if jokerName == "Ride The Bus":
+                resetBus = False
+                for card in hand:
+                    if affectedCards == "all" or card.number in affectedCards or card.enhancement == "stone":
+                        if not card.debuffed:
+                            if cardCountsAsFaceCard(card, save):
+                                resetBus = True
+
+                if resetBus:
+                    addToJokerAttribute(save, "Ride The Bus", "mult", 0, True)
+                    chain.add("mult", "Reset!", joker, chips, mult)
+                else:
+                    addToJokerAttribute(save, "Ride The Bus", "mult", 1)
+                    jokerMult = jokerData["mult"] + 1
+                    mult += jokerMult
+                    chain.add("mult", jokerMult, joker, chips, mult)
 
             # end-of-hand check hand upgrader (space joker)
             if jokerName == "Space Joker":
@@ -446,6 +521,16 @@ def calcPointsFromHand(hand, handData, unselectedHand, save):
                 if jokerChips > 0:
                     chips += jokerChips
                     chain.add("chip", jokerChips, joker, chips, mult)
+
+            # same for steel joker
+            if jokerName == "Steel Joker":
+                jokerMultMult = 0
+                for card in save.deck:
+                    if card.enhancement == "steel":
+                        jokerMultMult += jokerData["multmult"]
+                if jokerMultMult > 0:
+                    mult *= jokerMultMult
+                    chain.add("multmult", jokerMultMult, joker, chips, mult)
 
             # end-of-hand uncommon joker check (baseball card)
             if jokerName == "Baseball Card":
@@ -693,9 +778,16 @@ def triggerCard(card, save, chain):
                     chain.add("visual", "Retriggered!", joker, chips, mult)
                     triggerCard(card, save, chain)
 
+        # last hand retriggerer (dusk)
+        if jokerName == "Dusk":
+            if save.hands == 1:
+                if "dusk" not in card.retriggeredBy:
+                    card.retriggeredBy.append("dusk")
+                    chain.add("visual", "Retriggered!", joker, chips, mult)
+                    triggerCard(card, save, chain)
+
         # enhancement check/remover (vampire)
-        # unlike regular balatro stone card values aren't tracked so when it removes a stone card enhancement it gives
-        # it a random value
+        # TODO: make sure this works with stone cards idk
         if jokerName == "Vampire":
             if card.enhancement is not None:
                 card.enhancement = None
