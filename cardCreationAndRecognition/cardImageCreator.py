@@ -168,7 +168,7 @@ def createImageFromCard(card, forPygame=False, debuffed=False):
         debuffedStr = ""
         if debuffed:
             debuffedStr = "Debuffed "
-        cardImage.save(f"imageCache/{debuffedStr}{card.toString()}.png")
+        cardImage.save(f"imageCache/{debuffedStr}{card.toString(mode='name')}.png")
 
     return cardImage
 

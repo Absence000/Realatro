@@ -142,6 +142,7 @@ def createCardFromBinary(id, binary, save, printedCards, sentToPrinter):
         # fingers crossed it doesn't scan a bunch of things as IDs and clog it up
         # to stop this, if the new ID was never seen on sentToPrinter.json it won't be added to printedCards.json
         # unless you have addPreviouslyPrintedCards on
+
         if id not in printedCards:
             if save.addPreviouslyPrintedCards or id in sentToPrinter:
                 printedCards.append(id)

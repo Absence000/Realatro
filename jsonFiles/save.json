@@ -16,7 +16,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 160
         },
         {
             "number": "4",
@@ -25,7 +25,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 320
         },
         {
             "number": "5",
@@ -43,7 +43,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 640
         },
         {
             "number": "7",
@@ -52,7 +52,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 800
         },
         {
             "number": "8",
@@ -61,7 +61,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 960
         },
         {
             "number": "9",
@@ -70,7 +70,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 1120
         },
         {
             "number": "10",
@@ -97,7 +97,7 @@
             "seal": null,
             "suit": "S",
             "retriggeredBy": [],
-            "id": null
+            "id": 1600
         },
         {
             "number": "K",
@@ -169,7 +169,7 @@
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": null
+            "id": 2880
         },
         {
             "number": "8",
@@ -187,7 +187,7 @@
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": null
+            "id": 3200
         },
         {
             "number": "10",
@@ -196,7 +196,7 @@
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": 3500
+            "id": 3360
         },
         {
             "number": "J",
@@ -223,7 +223,7 @@
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": null
+            "id": 3840
         },
         {
             "number": "A",
@@ -232,7 +232,7 @@
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": 4140
+            "id": 4000
         },
         {
             "number": "2",
@@ -241,7 +241,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 6240
         },
         {
             "number": "3",
@@ -250,7 +250,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 6400
         },
         {
             "number": "4",
@@ -268,7 +268,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 6720
         },
         {
             "number": "6",
@@ -295,7 +295,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 7200
         },
         {
             "number": "9",
@@ -304,7 +304,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 7360
         },
         {
             "number": "10",
@@ -313,7 +313,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 7520
         },
         {
             "number": "J",
@@ -322,7 +322,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 7680
         },
         {
             "number": "Q",
@@ -340,7 +340,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 8000
         },
         {
             "number": "A",
@@ -349,7 +349,7 @@
             "seal": null,
             "suit": "D",
             "retriggeredBy": [],
-            "id": null
+            "id": 8160
         },
         {
             "number": "2",
@@ -358,7 +358,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 4160
         },
         {
             "number": "3",
@@ -367,7 +367,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 4320
         },
         {
             "number": "4",
@@ -385,7 +385,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 4640
         },
         {
             "number": "6",
@@ -394,7 +394,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 4800
         },
         {
             "number": "7",
@@ -403,7 +403,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 4960
         },
         {
             "number": "8",
@@ -412,7 +412,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 5120
         },
         {
             "number": "9",
@@ -421,7 +421,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 5280
         },
         {
             "number": "10",
@@ -445,7 +445,7 @@
             "number": "Q",
             "enhancement": null,
             "edition": null,
-            "seal": null,
+            "seal": "red",
             "suit": "H",
             "retriggeredBy": [],
             "id": 5760
@@ -457,7 +457,7 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 5920
         },
         {
             "number": "A",
@@ -466,87 +466,56 @@
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": null
+            "id": 6080
         }
     ],
-    "ante": 1,
-    "blindIndex": 1,
-    "state": "shop",
-    "hands": 2,
-    "discards": 1,
+    "ante": 2,
+    "blindIndex": 2,
+    "state": "dead",
+    "hands": 0,
+    "discards": 0,
     "shop": {
         "cards": [
+            null,
             [
                 [
-                    "Spare Trousers",
+                    "Gluttonous Joker",
                     {
                         "type": "mult",
-                        "mult": 0,
-                        "condition": "active",
-                        "hand": "Two Pair",
+                        "condition": "suit",
+                        "suit": "C",
+                        "mult": 3,
                         "finished": true,
                         "position": [
-                            4,
-                            15
+                            9,
+                            1
                         ],
-                        "id": 98,
-                        "cost": 6,
-                        "rarity": "Uncommon",
-                        "description": "This Joker gains +2 Mult if played hand contains a Two Pair",
+                        "id": 5,
+                        "cost": 5,
+                        "rarity": "Common",
+                        "description": "Played cards with Club suit give +3 Mult when scored",
                         "additionalSellValue": 0,
                         "edition": null
                     }
                 ],
-                6
-            ],
-            [
-                [
-                    "Vagabond",
-                    {
-                        "type": "effect",
-                        "finished": true,
-                        "position": [
-                            5,
-                            12
-                        ],
-                        "id": 71,
-                        "cost": 8,
-                        "rarity": "Rare",
-                        "description": "Create a Tarot card if hand is played with $4 or less",
-                        "additionalSellValue": 0,
-                        "edition": null
-                    }
-                ],
-                8
+                5
             ]
         ],
         "packs": [
-            [
-                {
-                    "subset": "buffoon",
-                    "size": "normal"
-                },
-                4
-            ],
-            [
-                {
-                    "subset": "celestial",
-                    "size": "normal"
-                },
-                4
-            ]
+            null,
+            null
         ],
         "vouchers": [
             null
         ],
-        "rerollCost": 5
+        "rerollCost": 6
     },
-    "money": 9,
+    "money": 28,
     "handLevels": {
         "High Card": {
-            "level": 1,
-            "chips": 5,
-            "mult": 1
+            "level": 4,
+            "chips": 35,
+            "mult": 4
         },
         "Pair": {
             "level": 1,
@@ -564,14 +533,14 @@
             "mult": 3
         },
         "Straight": {
-            "level": 1,
-            "chips": 30,
-            "mult": 4
+            "level": 2,
+            "chips": 60,
+            "mult": 7
         },
         "Flush": {
-            "level": 1,
-            "chips": 35,
-            "mult": 4
+            "level": 2,
+            "chips": 50,
+            "mult": 6
         },
         "Full House": {
             "level": 1,
@@ -614,35 +583,40 @@
     "consumablesLimit": 2,
     "hand": [
         {
-            "number": "10",
-            "enhancement": null,
-            "edition": null,
-            "seal": null,
-            "suit": "S",
-            "retriggeredBy": [],
-            "id": 1280
-        }
-    ],
-    "handLimit": 8,
-    "jokers": [],
-    "jokersInPlay": [],
-    "jokerLimit": 5,
-    "requiredScore": 450.0,
-    "blindInfo": [
-        "Big Blind",
-        1.5,
-        4
-    ],
-    "discardedCards": [],
-    "playedCards": [
-        {
-            "number": "Q",
+            "number": "8",
             "enhancement": null,
             "edition": null,
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": 3680
+            "id": 3040
+        },
+        {
+            "number": "7",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "H",
+            "retriggeredBy": [],
+            "id": 4960
+        },
+        {
+            "number": "5",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "H",
+            "retriggeredBy": [],
+            "id": 4640
+        },
+        {
+            "number": "A",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "H",
+            "retriggeredBy": [],
+            "id": 6080
         },
         {
             "number": "4",
@@ -658,60 +632,238 @@
             "enhancement": null,
             "edition": null,
             "seal": null,
-            "suit": "C",
+            "suit": "S",
             "retriggeredBy": [],
-            "id": 2560
+            "id": 480
+        }
+    ],
+    "handLimit": 8,
+    "jokers": [
+        [
+            "Lusty Joker",
+            {
+                "type": "mult",
+                "condition": "suit",
+                "suit": "H",
+                "mult": 3,
+                "finished": true,
+                "position": [
+                    7,
+                    1
+                ],
+                "id": 3,
+                "cost": 5,
+                "rarity": "Common",
+                "description": "Played cards with Heart suit give +3 Mult when scored",
+                "additionalSellValue": 0,
+                "edition": null
+            }
+        ],
+        [
+            "Business Card",
+            {
+                "type": "economy",
+                "money": 2,
+                "finished": true,
+                "condition": "face",
+                "position": [
+                    1,
+                    4
+                ],
+                "id": 42,
+                "cost": 4,
+                "rarity": "Common",
+                "description": "Played face cards have a 1 in 2 chance to give $2 when scored",
+                "additionalSellValue": 0,
+                "edition": null
+            }
+        ]
+    ],
+    "jokersInPlay": [
+        [
+            "Business Card",
+            {
+                "type": "economy",
+                "money": 2,
+                "finished": true,
+                "condition": "face",
+                "position": [
+                    1,
+                    4
+                ],
+                "id": 42,
+                "cost": 4,
+                "rarity": "Common",
+                "description": "Played face cards have a 1 in 2 chance to give $2 when scored",
+                "additionalSellValue": 0,
+                "edition": null
+            }
+        ],
+        [
+            "Lusty Joker",
+            {
+                "type": "mult",
+                "condition": "suit",
+                "suit": "H",
+                "mult": 3,
+                "finished": true,
+                "position": [
+                    7,
+                    1
+                ],
+                "id": 3,
+                "cost": 5,
+                "rarity": "Common",
+                "description": "Played cards with Heart suit give +3 Mult when scored",
+                "additionalSellValue": 0,
+                "edition": null
+            }
+        ]
+    ],
+    "jokerLimit": 5,
+    "requiredScore": 1600,
+    "blindInfo": [
+        "Boss Blind",
+        2,
+        5
+    ],
+    "discardedCards": [],
+    "playedCards": [
+        {
+            "number": "K",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1760
         },
         {
-            "number": "8",
+            "number": "Q",
             "enhancement": null,
             "edition": null,
             "seal": null,
             "suit": "C",
             "retriggeredBy": [],
-            "id": 3040
+            "id": 3680
         },
         {
-            "number": "3",
-            "enhancement": null,
-            "edition": null,
-            "seal": null,
-            "suit": "C",
-            "retriggeredBy": [],
-            "id": 2240
-        },
-        {
-            "number": "J",
-            "enhancement": null,
-            "edition": null,
-            "seal": null,
-            "suit": "C",
-            "retriggeredBy": [],
-            "id": 3520
-        },
-        {
-            "number": "4",
-            "enhancement": null,
-            "edition": null,
-            "seal": null,
-            "suit": "D",
-            "retriggeredBy": [],
-            "id": 6560
-        },
-        {
-            "number": "J",
+            "number": "K",
             "enhancement": null,
             "edition": null,
             "seal": null,
             "suit": "H",
             "retriggeredBy": [],
-            "id": 5600
+            "id": 5920
+        },
+        {
+            "number": "Q",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1600
+        },
+        {
+            "number": "6",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 640
+        },
+        {
+            "number": "9",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1120
+        },
+        {
+            "number": "7",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 800
+        },
+        {
+            "number": "J",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1440
+        },
+        {
+            "number": "K",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "C",
+            "retriggeredBy": [],
+            "id": 3840
+        },
+        {
+            "number": "J",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "D",
+            "retriggeredBy": [],
+            "id": 7680
+        },
+        {
+            "number": "10",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "S",
+            "retriggeredBy": [],
+            "id": 1280
+        },
+        {
+            "number": "2",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "C",
+            "retriggeredBy": [],
+            "id": 2080
+        },
+        {
+            "number": "5",
+            "enhancement": null,
+            "edition": null,
+            "seal": null,
+            "suit": "C",
+            "retriggeredBy": [],
+            "id": 2560
+        },
+        {
+            "number": "Q",
+            "enhancement": null,
+            "edition": null,
+            "seal": "red",
+            "suit": "H",
+            "retriggeredBy": [],
+            "id": 5760
         }
     ],
-    "score": 320,
+    "score": 1210,
     "round": 1,
     "irl": true,
-    "lastUsedTarotOrPlanet": null,
+    "lastUsedTarotOrPlanet": {
+        "name": "The Fool (0)",
+        "negative": null,
+        "type": "Tarot"
+    },
     "startingHands": 4,
     "startingDiscards": 3,
     "ectoUses": 0,

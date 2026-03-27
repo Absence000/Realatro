@@ -154,7 +154,9 @@ def main():
                 inGame = True
             elif pressedButton == "new":
                 pressedButton = ""
+                addPrev = save.addPreviouslyPrintedCards
                 save = createBlankSave("standard")
+                save.addPreviouslyPrintedCards = addPrev
                 inGame = True
             elif pressedButton == "extract":
                 pressedButton = ""
